@@ -13,7 +13,7 @@ def initialize():
     except FileNotFoundError or KeyError:
         print("No such username was found")
         apikey = ' '
-        valide = True
+        valide = False
         apikey = input("Enter valid API key: ")
         #TODO :: test pour la validité du api key
 

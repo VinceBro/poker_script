@@ -1,4 +1,4 @@
-import json, requests, pickle, datetime
+import json, requests, pickle, datetime, sys
 
 
 response = unirest.get("https://poker-odds.p.mashape.com/hold-em/odds?community=5d%2C7c%2CAh&hand=As%2CKd&players=3",
@@ -11,17 +11,17 @@ response = unirest.get("https://poker-odds.p.mashape.com/hold-em/odds?community=
 
 
 class odds():
-    def __init__(self):
+    def __init__(self, username, apikey):
         self.counter = 0
-        self.apikey = "TODO : insert api-key (subscribe)"
+        self.apikey = apikey
         self.url = "TODO : determine url"
-        self.username = " "
+        self.username = username
         self.NAME = " "
         self.hand = " "
         self.community = " "
-        self.odds = 0
+        self.odds = 80.00
         self.continue = "y"
-        self.day =
+        self.day = datetime.date.today()
 
     def initialize(self):
         self.day = datetime.date.today()
@@ -31,9 +31,9 @@ class odds():
     def store(self):
         return None
     def request(self):
-        if self.counter >= 95:
-            print("Daily request limit reached try again tomorrow")
-            return None
+        if self.counter >= 95 and self.day == datetime.date.today():
+            self.store()
+            sys.exit("Daily limit reached try again tomorrow")
         #TODO call requests
 
     def count(self):
@@ -41,7 +41,7 @@ class odds():
         if self.counter = 95:
 
     def main(self):
-        self.hand = input("Enter your starting hand: ")
+        self.hand = input("Enter your starting hand: \n Ex: jh 3d")
         #TODO call api for result
         print("Your initial odds of winning this hand are: " + self.odds)
         self.continue = input("Do you wish to continue (y or n)?")
@@ -54,9 +54,10 @@ class odds():
             elif self.community == "N" or self.community == "n":
                 break
             else:
+                print("Do you wish to continue (y or n)?")
                 continue
 
 
 
                 #TODO call api for results
-                print("The odds of winning this hand are: " + self.odds)
+            print("The odds of winning this hand are: " + self.odds)
