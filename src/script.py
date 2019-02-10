@@ -24,11 +24,17 @@ class odds():
         self.day =
 
     def initialize(self):
+        self.day = datetime.date.today()
         return None
 
 
     def store(self):
         return None
+    def request(self):
+        if self.counter >= 95:
+            print("Daily request limit reached try again tomorrow")
+            return None
+        #TODO call requests
 
     def count(self):
         self.counter += 1
@@ -41,11 +47,16 @@ class odds():
         self.continue = input("Do you wish to continue (y or n)?")
 
 
-        ### while loop mon ami
-        if self.continue == "y" or self.continue == "Y":
-            for i in range(3):
-                self.community = input("Enter community cards(enter n to stop): ")
-                if self.community == "N" or self.community == "n":
-                    break
+        while True:
+            if (self.continue).lower() == "y":
+                for i in range(3):
+                    self.community = input("Enter community cards(enter n to stop): ")
+            elif self.community == "N" or self.community == "n":
+                break
+            else:
+                continue
+
+
+
                 #TODO call api for results
                 print("The odds of winning this hand are: " + self.odds)

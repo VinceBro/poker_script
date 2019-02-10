@@ -1,5 +1,6 @@
 import pickle
-from script import odds
+from script import *
+import script.property
 
 def initialize():
     username = ' '
@@ -22,6 +23,7 @@ def initialize():
 if __name__ == "__main__":
     x = [1, 2, 3]
     y = [2, 3 ,4]
+    odds.initialize()
 
     with open("/pickle/x.pickle", "wb") as fich:
         fich.write(pickle.dumps(x))
