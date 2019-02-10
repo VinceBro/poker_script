@@ -15,14 +15,14 @@ def initialize():
         valide = True
         apikey = input("Enter valid API key: ")
         #TODO :: test pour la validité du api key
-        
+
         if valide:
-            
-    
+
+
 if __name__ == "__main__":
     x = [1, 2, 3]
     y = [2, 3 ,4]
-    
+
     with open("/pickle/x.pickle", "wb") as fich:
         fich.write(pickle.dumps(x))
     with open("/pickle/y.pickle", "wb") as fich:
