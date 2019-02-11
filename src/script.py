@@ -1,14 +1,21 @@
 import json, requests, pickle, datetime, sys
 
 
-response = unirest.get("https://poker-odds.p.mashape.com/hold-em/odds?community=5d%2C7c%2CAh&hand=As%2CKd&players=3",
-  headers={
-    "X-Mashape-Key": "xJIMHRTV3kmshCWoU9PYBhFO8Edfp1DOQoBjsn00juCk8aKN4V",
-    "Accept": "application/json"
-  }
-)
-
-
+ # for symbol in symbole:
+ #
+ #        params = {
+ #            'function': FUNCTION,
+ #            'symbol': symbol,
+ #            'apikey': APIKEY,
+ #            'outputsize': size,
+ #        }
+ #
+ #        response = requests.get(url=URL, params=params)  # type: object
+ #        response = json.loads(response.text)
+ #        tuple1 = (str(DEBUT), response['Time Series (Daily)'][str(DEBUT)][str(variable)])
+ #        tuple2 = (str(FIN), response['Time Series (Daily)'][str(FIN)][str(variable)])
+ #        print('{}({}, {}, {})'.format(symbol, VAL, str(DEBUT), str(FIN)))
+ #        print([tuple1, tuple2])
 
 class odds():
     def __init__(self, username, apikey):
@@ -24,18 +31,40 @@ class odds():
         self.day = datetime.date.today()
 
     def initialize(self):
-        self.day = datetime.date.today()
+        if self.day != datetime.date.today():
+            self.day = datetime.date.today()
+            self.counter = 0
         return None
 
+    def convert_to_url(self, cards):
+        return "%2C".join(cards)
 
     def store(self):
         return None
-    def request(self):
+
+    # pf == pre-flop,
+    def request(self, turn, board = [], hole):
+        self.counter += 1
         if self.counter >= 95 and self.day == datetime.date.today():
             self.store()
             sys.exit("Daily limit reached try again tomorrow")
-        #TODO call requests
 
+        if turn == "pre-flop":
+
+            response = unirest.get("https://sf-api-on-demand-poker-odds-v1.p.mashape.com/pre-flop?hole=" + convert_to_url(hole),
+              headers={
+                "X-Mashape-Key": "CwTYMXYWmRmshP8DG1HkXmRgYqySp1298F2jsnVzKB3GGN0cKM",
+                "Accept": "application/json"
+              }
+            )
+
+        else:
+            response = unirest.get("https://sf-api-on-demand-poker-odds-v1.p.mashape.com/" + turn + "?board=" + convert_to_url(board) + "&hole=" + convert_to_url(hole) ,
+              headers={
+                "X-Mashape-Key": "CwTYMXYWmRmshP8DG1HkXmRgYqySp1298F2jsnVzKB3GGN0cKM",
+                "Accept": "application/json"
+              }
+            )
     def count(self):
         self.counter += 1
         if self.counter = 95:

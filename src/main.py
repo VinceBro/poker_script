@@ -1,6 +1,5 @@
-import pickle
-from script import *
-import script.property
+import json,requests, pickle, datetime, sys
+#from script import *
 
 def initialize():
     username = ' '
@@ -15,17 +14,27 @@ def initialize():
         apikey = ' '
         valide = False
         apikey = input("Enter valid API key: ")
-        #TODO :: test pour la validité du api key
-
-        if valide:
 
 
 if __name__ == "__main__":
-    x = [1, 2, 3]
-    y = [2, 3 ,4]
-    odds.initialize()
+    # odds = odds()
+    response = {}
+    URL = "https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c"
+    headers={
+      "X-Mashape-Key": "CwTYMXYWmRmshP8DG1HkXmRgYqySp1298F2jsnVzKB3GGN0cKM",
+      "Accept": "application/json"
+    }
+    response = requests.get(url=URL, headers=headers)  # type: object
+    print(response)
+    response = json.loads(response.text)
+    print(response)
 
-    with open("/pickle/x.pickle", "wb") as fich:
+    # response = unirest.get("https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c",
+    #               headers={
+    #                 "X-Mashape-Key": "CwTYMXYWmRmshP8DG1HkXmRgYqySp1298F2jsnVzKB3GGN0cKM",
+    #                 "Accept": "application/json"
+    #               }
+    #             )
+
+    with open(response + ".pickle", "wb") as fich:
         fich.write(pickle.dumps(x))
-    with open("/pickle/y.pickle", "wb") as fich:
-        fich.write(pickle.dumps(y))
