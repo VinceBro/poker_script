@@ -70,6 +70,10 @@ class odds():
         self.counter += 1
         if self.counter == 95:
             pass
+    def n_shutdown(self, str_decision):
+        if (str_decision).lower() == "n":
+            sys.exit("--- program terminated ---")
+        return None
 
     def flop_boucle(self):
         self.hand.append(input(str("Enter your 1st card (Ex: Kh as for king of hearts)\n")))
@@ -79,15 +83,14 @@ class odds():
         while True:
             self.continuer = input("Do you wish to continue (y or n)?")
             if (self.continuer).lower() == "y":
-                self.community.append(input("Enter the first 3 community cards (1/3) -- enter n to stop: "))
-                self.community.append(input("Enter the first 3 community cards (2/3) -- enter n to stop: "))
-                self.community.append(input("Enter the first 3 community cards (3/3) -- enter n to stop: "))
+                for i in range(3):
+                    self.continuer = input("Enter the first 3 community cards (" + str(i+ 1) + "/3) -- enter n to stop: ")
+                    n_shutdown(self.continuer)
+                    self.community.append(self.continuer)
+
                 print("the flop cards for this turn are  " + str(self.community))
                 break
-            if (self.continuer).lower() == "n":
-                sys.exit("--- program terminated ---")
-            else:
-                continue
+            n_shutdown(self.continuer)
 
     ## TODO: strip si jamais le chum entre des espaces!!!!!!!!!
     ## TODO ajout des 52 cartes pour vérifier l'input du user
