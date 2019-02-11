@@ -1,4 +1,4 @@
-import json, requests, pickle, datetime, sys
+import json, requests, pickle, datetime, sys, itertools
 
 
  # for symbol in symbole:
@@ -17,6 +17,21 @@ import json, requests, pickle, datetime, sys
  #        print('{}({}, {}, {})'.format(symbol, VAL, str(DEBUT), str(FIN)))
  #        print([tuple1, tuple2])
 
+class cards():
+    def __init__(self):
+        self.SUITS = 'cdhs'
+        self.RANKS = '23456789TJQKA'
+        self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
+    def __str__(self):
+        return self.deck
+
+
+class hole():
+    def __init__(self, card1, card2):
+        self.card1 = card1
+        self.card2 = card2
+
+
 class odds():
     def __init__(self, username, apikey):
         self.counter = 0
@@ -26,7 +41,7 @@ class odds():
         self.NAME = " "
         self.hand = []
         self.community = []
-        self.odds = "\n"+"dovid manque encore de pratique" + "\n"
+        self.odds = "\n"+"dovid manque encore de pratique"
         self.continuer = "y"
         self.day = datetime.date.today()
         self.shutdown = ""
@@ -77,8 +92,14 @@ class odds():
         return None
 
     def flop_boucle(self):
-        self.hand.append(input(str("Enter your 1st card (Ex: Kh as for king of hearts)\n")))
+        while True:
+            self.hand.append(input(str("Enter your 1st card (Ex: Kh as for king of hearts)\n")))
+            if self.check_hand_in_deck(0) is False:
+                continue
+            break
+            self.check_hand_in_deck(0)
         self.hand.append(input(str("Enter your 2nd card (Ex: Kh as for king of hearts)\n")))
+        self.check_hand_in_deck(1)
         #### maths pour calculer les odds ######
         print("Your initial odds of winning this hand (pre-flop) are: " + str(self.odds))
         while True:
@@ -86,6 +107,7 @@ class odds():
             if (self.continuer).lower() == "y":
                 for i in range(3):
                     self.continuer = input("Enter the first 3 community cards (" + str(i+ 1) + "/3) -- enter n to stop: ")
+                    self.check_in_deck(i+2)
                     self.n_shutdown(self.continuer)
                     self.community.append(self.continuer)
 
@@ -108,6 +130,15 @@ class odds():
         self.shutdown = input("would you like to continue to the next turn? (y/n)")
         self.n_shutdown(self.shutdown)
 
+    def check_hand_in_deck(self, numero_de_carte):
+        valeur = str(self.hand[numero_de_carte])
+        if valeur not in cards.deck:
+            print(cards.deck)
+            print("card {} is not in deck mon chum".format(valeur))
+            return False
+        else:
+            return True
+
     def main(self):
         ## flop et preflop
         odds.flop_boucle()
@@ -120,4 +151,10 @@ class odds():
 
 if __name__ == '__main__':
     odds = odds('remi', "CwTYMXYWmRmshP8DG1HkXmRgYqySp1298F2jsnVzKB3GGN0cKM")
+    cards = cards()
     odds.main()
+
+
+
+
+str("kh"+"'") == str("kh'")
