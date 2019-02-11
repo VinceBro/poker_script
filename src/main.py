@@ -36,5 +36,5 @@ if __name__ == "__main__":
     #               }
     #             )
 
-    with open(response + ".pickle", "wb") as fich:
-        fich.write(pickle.dumps(x))
+    with open("response.pickle", "wb") as fich:
+        fich.write(pickle.dumps(response))
