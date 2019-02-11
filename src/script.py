@@ -97,9 +97,11 @@ class odds():
             if self.check_hand_in_deck(0) is False:
                 continue
             break
-            self.check_hand_in_deck(0)
-        self.hand.append(input(str("Enter your 2nd card (Ex: Kh as for king of hearts)\n")))
-        self.check_hand_in_deck(1)
+        while True:
+            self.hand.append(input(str("Enter your 2nd card (Ex: Kh as for king of hearts)\n")))
+            if self.check_hand_in_deck(1) is False:
+                continue
+            break
         #### maths pour calculer les odds ######
         print("Your initial odds of winning this hand (pre-flop) are: " + str(self.odds))
         while True:
@@ -119,7 +121,12 @@ class odds():
     ## TODO ajout des 52 cartes pour vérifier l'input du user
     def turn_boucle(self):
         self.shutdown = input("would you like to continue? (y/n)")
-        self.community.append(input("Enter the 4th community card: "))
+        while True:
+            self.community.append(input("Enter the 4th community card: "))
+            if self.check_community_in_deck(0) is False:
+                continue
+            break
+
         print("the community cards for this turn are now " + str(self.community))
         self.shutdown = input("would you like to continue to the next turn? (y/n)")
         self.n_shutdown(self.shutdown)
@@ -132,6 +139,16 @@ class odds():
 
     def check_hand_in_deck(self, numero_de_carte):
         valeur = str(self.hand[numero_de_carte])
+        if valeur not in cards.deck:
+            print(cards.deck)
+            print("card {} is not in deck mon chum".format(valeur))
+            return False
+        else:
+            return True
+
+#### faire poper si jamais mauvais input, sinon ca continue à loop
+    def check_community_in_deck(self, numero_de_carte):
+        valeur = str(self.community[numero_de_carte])
         if valeur not in cards.deck:
             print(cards.deck)
             print("card {} is not in deck mon chum".format(valeur))
@@ -153,8 +170,3 @@ if __name__ == '__main__':
     odds = odds('remi', "CwTYMXYWmRmshP8DG1HkXmRgYqySp1298F2jsnVzKB3GGN0cKM")
     cards = cards()
     odds.main()
-
-
-
-
-str("kh"+"'") == str("kh'")
