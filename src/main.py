@@ -35,6 +35,6 @@ if __name__ == "__main__":
     #                 "Accept": "application/json"
     #               }
     #             )
-
-    with open("response.pickle", "wb") as fich:
-        fich.write(pickle.dumps(response))
+    #
+    # with open("response.pickle", "wb") as fich:
+    #     fich.write(pickle.dumps(response))
