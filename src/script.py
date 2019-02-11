@@ -70,6 +70,7 @@ class odds():
         self.counter += 1
         if self.counter == 95:
             pass
+
     def n_shutdown(self, str_decision):
         if (str_decision).lower() == "n":
             sys.exit("--- program terminated ---")
@@ -85,12 +86,12 @@ class odds():
             if (self.continuer).lower() == "y":
                 for i in range(3):
                     self.continuer = input("Enter the first 3 community cards (" + str(i+ 1) + "/3) -- enter n to stop: ")
-                    n_shutdown(self.continuer)
+                    self.n_shutdown(self.continuer)
                     self.community.append(self.continuer)
 
                 print("the flop cards for this turn are  " + str(self.community))
                 break
-            n_shutdown(self.continuer)
+            self.n_shutdown(self.continuer)
 
     ## TODO: strip si jamais le chum entre des espaces!!!!!!!!!
     ## TODO ajout des 52 cartes pour vérifier l'input du user
@@ -99,15 +100,13 @@ class odds():
         self.community.append(input("Enter the 4th community card: "))
         print("the community cards for this turn are now " + str(self.community))
         self.shutdown = input("would you like to continue to the next turn? (y/n)")
-        if (self.shutdown).lower() == "n":
-            sys.exit("--- program terminated ---")
+        self.n_shutdown(self.shutdown)
 
     def river_boucle(self):
         self.community.append(input("Enter the 5th community card: "))
         print("the community cards for this turn are now " + str(self.community))
         self.shutdown = input("would you like to continue to the next turn? (y/n)")
-        if (self.shutdown).lower() == "n":
-            sys.exit("--- program terminated ---")
+        self.n_shutdown(self.shutdown)
 
     def main(self):
         ## flop et preflop
