@@ -1,22 +1,6 @@
 import json, requests, pickle, datetime, sys, itertools
 
 
- # for symbol in symbole:
- #
- #        params = {
- #            'function': FUNCTION,
- #            'symbol': symbol,
- #            'apikey': APIKEY,
- #            'outputsize': size,
- #        }
- #
- #        response = requests.get(url=URL, params=params)  # type: object
- #        response = json.loads(response.text)
- #        tuple1 = (str(DEBUT), response['Time Series (Daily)'][str(DEBUT)][str(variable)])
- #        tuple2 = (str(FIN), response['Time Series (Daily)'][str(FIN)][str(variable)])
- #        print('{}({}, {}, {})'.format(symbol, VAL, str(DEBUT), str(FIN)))
- #        print([tuple1, tuple2])
-
 class cards():
     def __init__(self):
         self.SUITS = 'cdhs'
@@ -30,7 +14,6 @@ class hole():
     def __init__(self, card1, card2):
         self.card1 = card1
         self.card2 = card2
-
 
 class odds():
     def __init__(self, username, apikey):
@@ -64,7 +47,7 @@ class odds():
         return None
 
     # pf == pre-flop,
-    def request(self, turn, board = [], hole):
+    def request(self, turn, board, hole):
         self.counter += 1
         if self.counter >= 95 and self.day == datetime.date.today():
             self.store()

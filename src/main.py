@@ -30,41 +30,43 @@ def initialize():
               "Accept": "application/json"
             }
 
-                try:
-                    response = requests.get(url=URL, headers=headers)  # type: object
-                    response = json.loads(response.text)
-                    response['message']
-                    continue
+            try:
+                response = requests.get(url=URL, headers=headers)  # type: object
+                response = json.loads(response.text)
+                response['message']
+                continue
 
-                except KeyError:
-                    print("Valid API key")
-                    time.sleep(.500)
-                    print("New user created: " + username)
-                    time.sleep(.500)
-                    odds = odds(username, apikey)
-                    odds.initialize()
-                    return odds
+            except KeyError:
+                print("Valid API key")
+                time.sleep(.500)
+                print("New user created: " + username)
+                time.sleep(.500)
+                odds = odds(username, apikey)
+                odds.initialize()
+                return odds
 
 if __name__ == "__main__":
     # odds = odds()
 
-    response = {}
-    URL = "https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c"
-    apikey = input("Enter apikey: \n")
-    headers={
-      "X-Mashape-Key": apikey,
-      "Accept": "application/json"
-    }
-    try:
-        response = requests.get(url=URL, headers=headers)  # type: object
-        print(response)
-        response = json.loads(response.text)
-        print(response)
-        response['message']
-        print("were not in boys")
+    # response = {}
+    # URL = "https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c"
+    # apikey = input("Enter apikey: \n")
+    # headers={
+    #   "X-Mashape-Key": apikey,
+    #   "Accept": "application/json"
+    # }
 
-    except KeyError:
-        print("were in boys!!")
+    initialize()
+    # try:
+    #     response = requests.get(url=URL, headers=headers)  # type: object
+    #     print(response)
+    #     response = json.loads(response.text)
+    #     print(response)
+    #     response['message']
+    #     print("were not in boys")
+    #
+    # except KeyError:
+    #     print("were in boys!!")
     # try response['message']:
     #     print("were not in boys")
     # except KeyError:
