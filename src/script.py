@@ -15,7 +15,7 @@ class hole():
         self.card1 = card1
         self.card2 = card2
 
-class odds():
+class manager():
     def __init__(self, username, apikey):
         self.counter = 0
         self.apikey = apikey
