@@ -64,7 +64,7 @@ class odds():
         return None
 
     # pf == pre-flop,
-    def request(self, turn, board = [], hole):
+    def request(self, turn, hole, board = []):
         self.counter += 1
         if self.counter >= 95 and self.day == datetime.date.today():
             self.store()
