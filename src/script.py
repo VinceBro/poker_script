@@ -1,6 +1,6 @@
 import json, requests, pickle, datetime, sys, itertools
 
-
+# 
 class cards():
     def __init__(self):
         self.SUITS = 'cdhs'
