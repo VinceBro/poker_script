@@ -1,11 +1,20 @@
 import json, requests, pickle, datetime, sys, itertools
 
-# 
+#
 class cards():
     def __init__(self):
         self.SUITS = 'cdhs'
         self.RANKS = '23456789TJQKA'
         self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
+        self.value = {}
+        counter = 0
+        valeur = 2
+        for i in self.deck:
+            self.value[i] = valeur
+            counter+= 1
+            if counter == 4:
+                valeur += 1
+                counter = 0
     def __str__(self):
         return self.deck
 

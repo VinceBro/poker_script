@@ -5,7 +5,7 @@ import random as r
 
 class odds(cards, manager):
     def __init__(self):
-        super().__init__
+        super().__init__()
 
 
         #TODO prends self.deck dans cards et enleve les cartes dans les mains
@@ -37,7 +37,8 @@ class odds(cards, manager):
 
     #placé les fonctions dans l'ordre en fonction de leur force
     def roy_flush(self, hand):
-        #lol
+        for i in played:
+
         pass
     def str_flush(self, hand):
         pass
