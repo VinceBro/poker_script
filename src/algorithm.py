@@ -25,7 +25,7 @@ class odds(cards, manager):
         poss2 = self.possible
         # TODO: deux possibilités qu'on enlevera la carte calculée à chaque
         #fois pour parcourir toutes les possibilités en évitant le double dipping
-        
+
         return None
 
 
@@ -37,6 +37,7 @@ class odds(cards, manager):
 
     #placé les fonctions dans l'ordre en fonction de leur force
     def roy_flush(self, hand):
+        #lol
         pass
     def str_flush(self, hand):
         pass
