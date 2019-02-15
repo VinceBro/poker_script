@@ -13,7 +13,7 @@ class odds(cards, manager):
         self.possible = r.choice(self.deck)
         self.played = self.hand + self.community
 
-    def calculate(self, self.hand, self.community, self.deck):
+    def calculate(self):
         """calcul de 1000 probabilités en fonction du nombre d'adversaires
         , des cartes dans les mains du joueur et dans les mains des adversaires"""
 
@@ -37,11 +37,24 @@ class odds(cards, manager):
 
     #placé les fonctions dans l'ordre en fonction de leur force
     def roy_flush(self, hand):
-        for i in played:
+        #ici self.played peut être facilement remplacé par hand
+        valid = True
+        type = hand[0][1]
+        roy = ['A', 'K', 'Q', 'J', '10']
+        for i in range(hand):
+            if type != hand[i][1]:
+                valid = False
+            #ici la méthode considère que self.played ou hand sont en ordre!!
+            if roy[i] != hand[i][0]:
+                valid = False
+        return valid
 
-        pass
     def str_flush(self, hand):
-        pass
+        valide = True
+        type = hand[0][1]
+        str = ['K', 'Q', 'J', '10', '9', '8', '7', '6', '5', '4', '3', '2', 'A']
+
+
     def four_of_k(self, hand):
         pass
     def full_house(self, hand):

@@ -157,6 +157,5 @@ class manager():
         print("The odds of winning this hand are: " + str(self.odds))
 
 if __name__ == '__main__':
-    odds = odds('remi', "CwTYMXYWmRmshP8DG1HkXmRgYqySp1298F2jsnVzKB3GGN0cKM")
     cards = cards()
-    odds.main()
+    print(cards.value)
