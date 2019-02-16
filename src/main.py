@@ -1,16 +1,16 @@
 import json,requests, pickle, datetime, sys, time
-#from script import *
+from script import *
 
 def initialize():
     username = ' '
     username = input("Enter username: ")
-    odds = {}
+    manager = {}
     try:
         with open(username + '.pickle', "rb") as fich:
-            odds = pickle.loads(fich.read())
+            manager = pickle.loads(fich.read())
         print("Welcome back " + username + " !")
-        odds.initialize()
-        return odds
+        manager.initialize()
+        return manager
 
     except FileNotFoundError or KeyError:
         print("No such username was found")
@@ -41,9 +41,10 @@ def initialize():
                     time.sleep(.500)
                     print("New user created: " + username)
                     time.sleep(.500)
-                    odds = odds(username, apikey)
-                    odds.initialize()
-                    return odds
+                    manager = manager(username, apikey)
+                    manager.initialize()
+                    return manager
+
 
 if __name__ == "__main__":
     # odds = odds()
