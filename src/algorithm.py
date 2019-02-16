@@ -60,9 +60,31 @@ class odds(cards, manager):
     def full_house(self, hand):
         pass
     def flush(self, hand):
-        pass
-    def straight(self, hand):
-        pass
+        valid = True
+        counterh = 0
+        counterc = 0
+        counters = 0
+        counterd = 0
+        for i in hand:
+            if i[1] == 'h':
+                counterh += 1
+            if i[1] == 'c':
+                counterc += 1
+            if i[1] == 's':
+                counters += 1
+            if i[1] == 'd':
+                counterd += 1
+        if counterd >= 5 or counterc >= 5 or counters >= 5 or counterd >= 5:
+            valid = True
+        return valid
+
+
+    def straight(self):
+        check1 = 0
+        suite = 0
+        cartes = manager.hand + manager.community
+        for carte in sorted(cartes):
+            if self.value[carte]
     def three_of_k(self, hand):
         pass
     def two_pair(self, hand):
