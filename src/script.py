@@ -10,7 +10,7 @@ class cards():
 
         self.value_to_hand = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
 
-            
+
 
     def value_to_card(self, value):
 
@@ -55,11 +55,7 @@ class manager():
         return None
 
     # pf == pre-flop,
-<<<<<<< HEAD
-    def request(self, turn, hole, board = []):
-=======
     def request(self, turn, board, hole):
->>>>>>> ac11d269c77c59a41ace2510778347ee16fc41a8
         self.counter += 1
         if self.counter >= 95 and self.day == datetime.date.today():
             self.store()
