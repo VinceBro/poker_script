@@ -53,9 +53,19 @@ class odds(cards, manager):
         if straight(hand)[0] and flush(hand)[0]:
             return True
         return False
-    # cest legit three_of_k 
+    # cest legit three_of_k
     def four_of_k(self, hand):
-        pass
+        counter = 1
+        current = " "
+        for i in sorted(hand):
+            if current != i[0]:
+                current = i[0]
+                counter = 1
+            elif current == i[0]:
+                counter += 1
+            if counter >= 4:
+                return (True, current)
+        return False
     def full_house(self, hand):
         pass
     def flush(self, hand):
@@ -80,12 +90,15 @@ class odds(cards, manager):
     def straight(hand):
         suite = 0
         cartes_valeurs = []
+        carte_sup = "1"
         for carte in hand:
             cartes_valeurs.append(self.hand_to_value[carte[0]])
+            if int(self.hand_to_value[carte[0]]) < carte_sup:
+                carte_sup = carte
         cartes_valeurs = sorted(cartes_valeurs)
         for i in range(len(cartes_valeurs)-1):
             if suite == 3:
-                return (True, self.value_to_hand[cartes_valeurs[-1]])
+                return (True, carte_sup)
             elif cartes_valeurs[i+1] - cartes_valeurs[i] == 1:
                 suite += 1
             else:
@@ -107,7 +120,17 @@ class odds(cards, manager):
         pass
 
     def pair(self, hand):
-        pass
+        current = " "
+        vpair = 0
+        for i in sorted(hand):
+            if current != i[0]:
+                current = i[0]
+            elif current == i[0]:
+                if self.hand_to_value[i] > vpair:
+                    vpair = self.hand_to_value[i]
+        if vpair != 0:
+            return (True, self.value_to_hand[vpair])
+        return False
     def high_card(self, hand):
         pass
         # TODO: calcul de probabilités

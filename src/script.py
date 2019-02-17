@@ -1,5 +1,6 @@
 import json, requests, pickle, datetime, sys, itertools
 
+from algorithm.py import odds
 #
 class cards():
     def __init__(self):
@@ -144,4 +145,6 @@ class manager():
 
 if __name__ == '__main__':
     cards = cards()
+    odds = odds()
     print(cards.value)
+    print(odds.straight(['2s','3s','4s','5s','6s']))
