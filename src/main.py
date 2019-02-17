@@ -1,10 +1,25 @@
-import json,requests, pickle, datetime, sys, time
-from script import *
+import json, pickle, datetime, sys, time
+#from script import *
 
 def initialize():
+    if True:
+        print("""
+
+   ___       __                        _      __
+  / _ \___  / /_____ ____ ___ ________(_)__  / /_
+ / ___/ _ \/  '_/ -_) __/(_-</ __/ __/ / _ \/ __/
+/_/   \___/_/\_\\__ /_/__/___/\__/_/ /_/ .__/\__/
+                    /___/            /_/
+
+""")
+        print("v1.0.0")
+        print("Contributors: jack_sparrow and davy_jones")
+        time.sleep(3)
     username = ' '
     username = input("Enter username: ")
     manager = {}
+    time.sleep(5)
+    print("Contributors: jack_sparrow and davy_jones")
     try:
         with open(username + '.pickle', "rb") as fich:
             manager = pickle.loads(fich.read())
@@ -30,42 +45,26 @@ def initialize():
               "Accept": "application/json"
             }
 
-                try:
-                    response = requests.get(url=URL, headers=headers)  # type: object
-                    response = json.loads(response.text)
-                    response['message']
-                    continue
+            try:
+                response = requests.get(url=URL, headers=headers)  # type: object
+                response = json.loads(response.text)
+                response['message']
+                continue
 
-                except KeyError:
-                    print("Valid API key")
-                    time.sleep(.500)
-                    print("New user created: " + username)
-                    time.sleep(.500)
-                    manager = manager(username, apikey)
-                    manager.initialize()
-                    return manager
+            except KeyError:
+                print("Valid API key")
+                time.sleep(.500)
+                print("New user created: " + username)
+                time.sleep(.500)
+                manager = manager(username, apikey)
+                manager.initialize()
+                return manager
 
 
 if __name__ == "__main__":
     # odds = odds()
+    initialize()
 
-    response = {}
-    URL = "https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c"
-    apikey = input("Enter apikey: \n")
-    headers={
-      "X-Mashape-Key": apikey,
-      "Accept": "application/json"
-    }
-    try:
-        response = requests.get(url=URL, headers=headers)  # type: object
-        print(response)
-        response = json.loads(response.text)
-        print(response)
-        response['message']
-        print("were not in boys")
-
-    except KeyError:
-        print("were in boys!!")
     # try response['message']:
     #     print("were not in boys")
     # except KeyError:
