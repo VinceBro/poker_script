@@ -1,5 +1,5 @@
 import json, pickle, datetime, sys, time
-#from script import *
+from script import manager
 
 def initialize():
     if True:
@@ -12,53 +12,50 @@ def initialize():
                     /___/            /_/
 
 """)
-        print("v1.0.0")
-        print("Contributors: jack_sparrow and davy_jones")
+        print("v0.0.5(beta)")
+        print("Made by: jack_sparrow and davy_jones")
         time.sleep(3)
     username = ' '
-    username = input("Enter username: ")
+    username = input("Enter new/existing username: ")
     manager = {}
-    time.sleep(5)
-    print("Contributors: jack_sparrow and davy_jones")
     try:
         with open(username + '.pickle', "rb") as fich:
             manager = pickle.loads(fich.read())
         print("Welcome back " + username + " !")
-        manager.initialize()
         return manager
 
     except FileNotFoundError or KeyError:
         print("No such username was found")
-        time.sleep(.500)
+        time.sleep(1)
         print("Creating new user")
         time.sleep(.500)
-        apikey = " "
-        response = {}
-        URL = "https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c"
+        print("New user created")
+        print("Welcome" + username + "!")
+        manager = manager(username)
+        return manager
 
-
-        while True:
-
-            apikey = input("Please enter a valid API key: ")
-            headers={
-              "X-Mashape-Key": apikey,
-              "Accept": "application/json"
-            }
-
-            try:
-                response = requests.get(url=URL, headers=headers)  # type: object
-                response = json.loads(response.text)
-                response['message']
-                continue
-
-            except KeyError:
-                print("Valid API key")
-                time.sleep(.500)
-                print("New user created: " + username)
-                time.sleep(.500)
-                manager = manager(username, apikey)
-                manager.initialize()
-                return manager
+        # while True:
+        #
+        #     apikey = input("Please enter a valid API key: ")
+        #     headers={
+        #       "X-Mashape-Key": apikey,
+        #       "Accept": "application/json"
+        #     }
+        #
+        #     try:
+        #         response = requests.get(url=URL, headers=headers)  # type: object
+        #         response = json.loads(response.text)
+        #         response['message']
+        #         continue
+        #
+        #     except KeyError:
+        #         print("Valid API key")
+        #         time.sleep(.500)
+        #         print("New user created: " + username)
+        #         time.sleep(.500)
+        #         manager = manager(username, apikey)
+        #         manager.initialize()
+        #         return manager
 
 
 if __name__ == "__main__":

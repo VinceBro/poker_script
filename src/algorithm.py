@@ -3,7 +3,7 @@ import random as r
 
 
 
-class odds(cards, manager):
+class odds(cards):
     def __init__(self):
         super().__init__()
 
@@ -89,20 +89,25 @@ class odds(cards, manager):
     # à refaire avec value_to_hand et hand_to_value
     def straight(hand):
         suite = 0
+        valid = False
         cartes_valeurs = []
-        carte_sup = "1"
+        str8 = []
         for carte in hand:
-            cartes_valeurs.append(self.hand_to_value[carte[0]])
-            if int(self.hand_to_value[carte[0]]) < carte_sup:
-                carte_sup = carte
+            cartes_valeurs.append(self.hand_to_value[carte])
         cartes_valeurs = sorted(cartes_valeurs)
-        for i in range(len(cartes_valeurs)-1):
-            if suite == 3:
-                return (True, carte_sup)
-            elif cartes_valeurs[i+1] - cartes_valeurs[i] == 1:
+        for i in range(len(sorted(cartes_valeurs))):
+            print(i)
+            if suite >= 3:
+                valid = True
+            if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
+                str8.append(cartes_valeurs[i])
                 suite += 1
+            elif str8 != [] and suite < 3:
+                str8 = []
             else:
                 suite = 0
+        if valid:
+            return (True, self.value_to_hand[str8[-1]])
         return False
     def three_of_k(self, hand):
         counter = 1
@@ -117,7 +122,18 @@ class odds(cards, manager):
                 return (True, current)
         return False
     def two_pair(self, hand):
-        pass
+        current = " "
+        counter = 0
+        vpair = 0
+        for i in sorted(hand):
+            if current != i[0]:
+                current = i[0]
+            elif current == i[0]:
+                if self.hand_to_value[i] > vpair:
+                    vpair = self.hand_to_value[i]
+        if vpair != 0:
+            return (True, self.value_to_hand[vpair])
+        return False
 
     def pair(self, hand):
         current = " "

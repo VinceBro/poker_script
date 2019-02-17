@@ -1,26 +1,27 @@
 import json, requests, pickle, datetime, sys, itertools
 
-from algorithm.py import odds
+from algorithm import odds
 #
-class cards():
+class cards(manager):
     def __init__(self):
         self.SUITS = 'cdhs'
         self.RANKS = '23456789TJQKA'
         self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
-        self.hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, '3s': 3, '4c': 4, '4d': 4, '4h': 4, '4s': 4, '5c': 5, '5d': 5, '5h': 5, '5s': 5, '6c': 6, '6d': 6, '6h': 6, '6s': 6, '7c': 7, '7d': 7, '7h': 7, '7s': 7, '8c': 8, '8d': 8, '8h': 8, '8s': 8, '9c': 9, '9d': 9, '9h': 9, '9s': 9, 'Tc': 10, 'Td': 10, 'Th': 10, 'Ts': 10, 'Jc': 11, 'Jd': 11, 'Jh': 11, 'Js': 11, 'Qc': 12, 'Qd': 12, 'Qh': 12, 'Qs': 12, 'Kc': 13, 'Kd': 13, 'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
+        self.hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, '3s': 3,
+        '4c': 4, '4d': 4, '4h': 4, '4s': 4, '5c': 5, '5d': 5, '5h': 5, '5s': 5, '6c': 6, '6d': 6,
+        '6h': 6, '6s': 6, '7c': 7, '7d': 7, '7h': 7, '7s': 7, '8c': 8, '8d': 8, '8h': 8, '8s': 8,
+        '9c': 9, '9d': 9, '9h': 9, '9s': 9, 'Tc': 10, 'Td': 10, 'Th': 10, 'Ts': 10, 'Jc': 11,
+        'Jd': 11, 'Jh': 11, 'Js': 11, 'Qc': 12, 'Qd': 12, 'Qh': 12, 'Qs': 12, 'Kc': 13, 'Kd': 13,
+        'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
 
-        self.value_to_hand = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9', 10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
+        self.value_to_hand = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
+        10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
     def __str__(self):
         return self.deck
 
-class manager():
-    def __init__(self, username, apikey):
+class manager(object):
+    def __init__(self, username):
         self.counter = 0
-        self.apikey = apikey
-        self.headers = {
-              "X-Mashape-Key": apikey,
-              "Accept": "application/json"
-            }
         self.url = " "
         self.username = username
         self.NAME = " "
@@ -30,7 +31,6 @@ class manager():
         self.continuer = "y"
         self.date = datetime.date.today()
         self.shutdown = ""
-        self.response = {}
         self.wins = 0
 
     def initialize(self):
@@ -146,5 +146,5 @@ class manager():
 if __name__ == '__main__':
     cards = cards()
     odds = odds()
-    print(cards.value)
+    print(cards.deck)
     print(odds.straight(['2s','3s','4s','5s','6s']))
