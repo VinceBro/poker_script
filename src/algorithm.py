@@ -28,7 +28,7 @@ class odds(cards):
 
         return None
 
-
+    
     # TODO: compare est la fonction qui sera appelée 1000000 fois
     #elle doit donc être extrêmement efficace
     def compare(self):
@@ -86,7 +86,7 @@ class odds(cards):
                 return True
         return False
 
-    # à refaire avec value_to_hand et hand_to_value
+    #Y manque le cas A 2 3 4 5
     def straight(hand):
         suite = 0
         valid = False
@@ -95,6 +95,18 @@ class odds(cards):
         for carte in hand:
             cartes_valeurs.append(self.hand_to_value[carte])
         cartes_valeurs = sorted(cartes_valeurs)
+        scartes = set(cartes_valeurs)
+
+
+        # Regarde pour le cas unique A 2 3 4 5 (6) (7)
+        if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
+            return(True, "7")
+        elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
+            return(True, "6")
+        elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
+            return(True, "5")
+
+
         for i in range(len(sorted(cartes_valeurs))):
             print(i)
             if suite >= 3:
@@ -124,15 +136,17 @@ class odds(cards):
     def two_pair(self, hand):
         current = " "
         counter = 0
-        vpair = 0
+        vpair1 = 0
+        vpair2 = 0
         for i in sorted(hand):
             if current != i[0]:
                 current = i[0]
             elif current == i[0]:
+                counter += 1
                 if self.hand_to_value[i] > vpair:
                     vpair = self.hand_to_value[i]
-        if vpair != 0:
-            return (True, self.value_to_hand[vpair])
+        if counter >= 2:
+            return (True, self.value_to_hand[vpair1], self.value_to_hand[vpair2])
         return False
 
     def pair(self, hand):
