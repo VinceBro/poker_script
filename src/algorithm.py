@@ -20,21 +20,21 @@ class Odds(Manager):
 
     def Rank(self, hand):
         if roy_flush(hand):
-            return 8
+            return 9
         elif str_flush(hand)[0]:
-            return (7, str_flush(hand)[1])
+            return (8, str_flush(hand)[1])
         elif four_of_k(hand)[0]:
-            return (6, four_of_k(hand)[1])
+            return (7, four_of_k(hand)[1])
         elif full_house(hand)[0]:
-            return (5, full_house(hand)[1])
+            return (6, full_house(hand)[1])
         elif flush(hand)[0]:
-            return (4, flush(hand)[1])
+            return (5, flush(hand)[1])
         elif straight(hand)[0]:
-            return (3, straight(hand)[1])
+            return (4, straight(hand)[1])
         elif three_of_k(hand)[0]:
-            return (2, three_of_k(hand)[1])
+            return (3, three_of_k(hand)[1])
         elif two_pair(hand)[0]:
-            return (1, two_pair(hand)[1])
+            return (2, two_pair(hand)[1])
         elif pair(hand)[0]:
             return (1, pair(hand)[1])
         else:
