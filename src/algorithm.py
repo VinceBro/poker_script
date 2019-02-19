@@ -40,28 +40,28 @@ class Odds(Manager):
         else:
             return (0, high_card(hand)[0])
 
-    def compare(self, ourHand, opponentHand):
-        self.counter += 1
-        if self.Rank(ourHand) > self.Rank(opponentHand):
-            self.ahead += 1
-        elif self.Rank(ourHand) < self.Rank(opponentHand):
-            pass
-        else:
-            #### toutes les exceptions
-            if ourRank == 0:
-                if self.high_card(ourHand) > self.high_card(opponentHand):
-                    self.ahead += 1
-                elif self.high_card(ourHand) < self.high_card(opponentHand):
-                    pass
-                else:
-                    pass
-
-
-
-
-
-
-        return None
+    # def compare(self, ourHand, opponentHand):
+    #     self.counter += 1
+    #     if self.Rank(ourHand) > self.Rank(opponentHand):
+    #         self.ahead += 1
+    #     elif self.Rank(ourHand) < self.Rank(opponentHand):
+    #         pass
+    #     else:
+    #         #### toutes les exceptions
+    #         if ourRank == 0:
+    #             if self.high_card(ourHand) > self.high_card(opponentHand):
+    #                 self.ahead += 1
+    #             elif self.high_card(ourHand) < self.high_card(opponentHand):
+    #                 pass
+    #             else:
+    #                 pass
+    #
+    #
+    #
+    #
+    #
+    #
+    #     return None
 
     def HandStrength(self):
         # ahead = tied = behind = 0
@@ -213,32 +213,29 @@ class Odds(Manager):
 
     def straight(self, hand):
         suite = 0
-        valid = False
         cartes_valeurs = self.convert_to_value(hand)
         str8 = []
         scartes = set(cartes_valeurs)
 
 
         #Pour le cas unique A 2 3 4 5 (6) (7)
-        # if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
-        #     return(True, "7")
-        # elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
-        #     return(True, "6")
-        # elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
-        #     return(True, "5")
+        if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
+            return(True, "7")
+        elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
+            return(True, "6")
+        elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
+            return(True, "5")
 
-
-        for i in range(len(sorted(cartes_valeurs))):
-            if suite >= 4:
-                valid = True
+        for i in range(len(cartes_valeurs))[1:]:
             if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
+                if str8 == []:
+                    str8.append(cartes_valeurs[i-1])
                 str8.append(cartes_valeurs[i])
                 suite += 1
-            elif str8 != [] and suite < 3:
-                str8 = []
             else:
+                str8 = []
                 suite = 0
-        if valid:
+        if suite >= 4:
             return (True, self.value_to_hand[str8[-1]])
         return False
 
