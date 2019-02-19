@@ -1,4 +1,4 @@
-import json, requests, pickle, datetime, sys, itertools
+import json, requests, pickle, datetime, sys, itertools, copy
 import random as r
 # import importlib
 # importlib.import_module(algorithm)
@@ -153,6 +153,6 @@ if __name__ == '__main__':
     manager = Manager('romi')
     cards = Cards()
     #enlever username de odds ca gosse en criss
-    odds = odds('romi')
+    odds = Odds('romi')
     while True:
-        odds.test_function(odds.create_random_hand())
+        odds.test_function(['Qh', '9s', 'Jd', '6s', '6c', 'Th', 'Kc'])

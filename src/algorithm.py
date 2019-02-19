@@ -3,7 +3,7 @@ import random as r
 
 
 
-class odds(Manager):
+class Odds(Manager):
     def __init__(self, username):
         super().__init__(username)
 
@@ -13,6 +13,61 @@ class odds(Manager):
         self.possible = r.choice(self.deck)
         self.played = self.hand + self.community
         self.testing_dict = {"hand" : [], "stats": {"roy_flush": [],"str_flush": [], "four_of_k" : [], "full_house": [], "flush": [], "straight" : [], "three_of_k": [], "two_pair": [], "pair" : [] }}
+        self.ahead = 0
+        self.tie = 0
+        self.counter = 0
+        self.opHand = []
+
+    def Rank(self, hand):
+        if roy_flush(hand):
+            return 8
+        elif str_flush(hand)[0]:
+            return (7, str_flush(hand)[1])
+        elif four_of_k(hand)[0]:
+            return (6, four_of_k(hand)[1])
+        elif full_house(hand)[0]:
+            return (5, full_house(hand)[1])
+        elif flush(hand)[0]:
+            return (4, flush(hand)[1])
+        elif straight(hand)[0]:
+            return (3, straight(hand)[1])
+        elif three_of_k(hand)[0]:
+            return (2, three_of_k(hand)[1])
+        elif two_pair(hand)[0]:
+            return (1, two_pair(hand)[1])
+        elif pair(hand)[0]:
+            return (1, pair(hand)[1])
+        else:
+            return (0, high_card(hand)[0])
+
+    def compare(self, ourHand, opponentHand):
+        self.counter += 1
+        if self.Rank(ourHand) > self.Rank(opponentHand):
+            self.ahead += 1
+        elif self.Rank(ourHand) < self.Rank(opponentHand):
+            pass
+        else:
+            #### toutes les exceptions
+            if ourRank == 0:
+                if self.high_card(ourHand) > self.high_card(opponentHand):
+                    self.ahead += 1
+                elif self.high_card(ourHand) < self.high_card(opponentHand):
+                    pass
+                else:
+                    pass
+
+
+
+
+
+
+        return None
+
+    def HandStrength(self):
+        # ahead = tied = behind = 0
+        # ourrank = Rank(ourcards, boardcards)
+        pass
+
 
 
     def calculate(self):
@@ -53,7 +108,7 @@ class odds(Manager):
 
     ###FOR TEST PURPOSES
     def create_random_hand(self):
-        temp_hand = self.deck
+        temp_hand = copy.copy(self.deck)
         ret_hand = []
         possible_length = [5, 6, 7]
         for i in range(r.choice(possible_length)):
@@ -68,14 +123,14 @@ class odds(Manager):
     #placé les fonctions dans l'ordre en fonction de leur force
     ###PAS ENCORE TESTÉ CELLE LA
     def roy_flush(self, hand):
-        temp_hand = hand
+        temp_hand = copy.copy(hand)
         cartes_valeurs = self.convert_to_value(hand)
         scartes = set(cartes_valeurs)
         if scartes.intersection({14, 13, 12, 11, 10}) == {14, 13, 12, 11, 10}:
             for carte in hand:
                 if self.hand_to_value[carte] != 14 or self.hand_to_value[carte]!= 13 or self.hand_to_value[carte] != 12 or self.hand_to_value[carte] != 11 or self.hand_to_value[carte] != 10:
                     temp_hand.remove(carte)
-            if flush(temp_hand):
+            if self.flush(temp_hand):
                 return True
         return False
 
@@ -105,7 +160,7 @@ class odds(Manager):
     #returns (True, three_of_k, pair)
     ###PAS ENCORE TESTÉ CETTE FONCTION LA
     def full_house(self, hand):
-        temp_hand = hand
+        temp_hand = copy.copy(hand)
         three = self.three_of_k(hand)
         try:
             if three[0]:
@@ -165,16 +220,16 @@ class odds(Manager):
 
 
         #Pour le cas unique A 2 3 4 5 (6) (7)
-        if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
-            return(True, "7")
-        elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
-            return(True, "6")
-        elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
-            return(True, "5")
+        # if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
+        #     return(True, "7")
+        # elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
+        #     return(True, "6")
+        # elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
+        #     return(True, "5")
 
 
         for i in range(len(sorted(cartes_valeurs))):
-            if suite >= 3:
+            if suite >= 4:
                 valid = True
             if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
                 str8.append(cartes_valeurs[i])
@@ -202,7 +257,7 @@ class odds(Manager):
 
     ###PAS TESTÉ CETTE FONCTION LA ENCORE
     def two_pair(self, hand):
-        temp_hand = hand
+        temp_hand = copy.copy(hand)
         p1 = self.pair(hand)
         try:
             if p1[0]:
@@ -232,5 +287,9 @@ class odds(Manager):
 
     #pas nécéssaire
     def high_card(self, hand):
-        pass
+        if self.hand_to_value[hand[0]] > self.hand_to_value[hand[1]]:
+            return (True, self.hand_to_value[hand[0]])
+        else:
+            return (True, self.hand_to_value[hand[1]])
+
         # TODO: calcul de probabilités

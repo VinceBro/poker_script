@@ -1,0 +1,7 @@
+returns str_flush(True, "K") and straight(True,"K")
+['Jd', '4d', 'Qh', 'Td', 'Kd', '3d', '5h']
+returns straight(False)
+['Qh', '9s', 'Jd', '6s', '6c', 'Th', 'Kc']
+##Logic problem in straight
+
+##Str_flush doesn't check if
