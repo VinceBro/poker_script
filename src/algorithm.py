@@ -40,28 +40,57 @@ class Odds(Manager):
         else:
             return (0, high_card(hand)[0])
 
-    # def compare(self, ourHand, opponentHand):
-    #     self.counter += 1
-    #     if self.Rank(ourHand) > self.Rank(opponentHand):
-    #         self.ahead += 1
-    #     elif self.Rank(ourHand) < self.Rank(opponentHand):
-    #         pass
-    #     else:
-    #         #### toutes les exceptions
-    #         if ourRank == 0:
-    #             if self.high_card(ourHand) > self.high_card(opponentHand):
-    #                 self.ahead += 1
-    #             elif self.high_card(ourHand) < self.high_card(opponentHand):
-    #                 pass
-    #             else:
-    #                 pass
-    #
-    #
-    #
-    #
-    #
-    #
-    #     return None
+
+#### je considère ourHand et opponentHand comme les cartes dans les mains....
+    def compare(self, ourHand, opponentHand):
+        self.counter += 1
+        ourBest = []
+        opBest = []
+        ourRank = self.Rank(ourHand)
+        opRank = self.Rank(opponentHand)
+        if ourRank > opRank:
+            self.ahead += 1
+        elif ourRank < opRank:
+            pass
+        else:
+            ourHand_values = self.convert_to_value(ourHand)
+            opHand_values = self.convert_to_value(opponentHand)
+            #### toutes les exceptions
+            if ourRank[0] == 0:
+                if ourHand_values[1] > opHand_values[1]:
+                    self.ahead += 1
+                elif ourHand_values[1] < opHand_values[1]:
+                    pass
+                else:
+                    if ourHand_values[0] > opHand_values[0]:
+                        self.ahead += 1
+                    elif ourHand_values[0] == opHand_values[0]:
+                        self.tie += 1
+                    else:
+                        pass
+
+            elif ourRank[0] == 1
+                if ourRank[1] > opRank[1]:
+                    self.ahead += 1
+                elif ourRank[1] < opRank[1]:
+                    pass
+                else:
+                    ### on doit faire une liste des 5 meilleures cartes pour chaque
+                    ### joueur et itérer sur chacune des listes pour voir qui flanche en premier
+                    ## si la condition de A>B n'est jamais rencontrée, on assume que A == B,
+                    ## donc égalité
+                    pass
+                    ## à terminer
+
+
+
+
+
+
+
+
+
+        return None
 
     def HandStrength(self):
         # ahead = tied = behind = 0
@@ -86,14 +115,13 @@ class Odds(Manager):
         return None
 
     def convert_to_value(self, hand):
-        cartes_valeurs = []
-        for carte in hand:
-            cartes_valeurs.append(self.hand_to_value[carte])
-        return sorted(cartes_valeurs)
+        # cartes_valeurs = []
+        # for carte in hand:
+        #     cartes_valeurs.append(self.hand_to_value[carte])
+        # return sorted(cartes_valeurs)
+        return sorted([hand_to_value[carte] for carte in hand])
     # TODO: compare est la fonction qui sera appelée 1000000 fois
     #elle doit donc être extrêmement efficace
-    def compare(self):
-        pass
 
     ###FOR TEST PURPOSES
     def test_function(self, hand):
@@ -270,6 +298,7 @@ class Odds(Manager):
             return False
 
     def pair(self, hand):
+        ### à checker, doit retourner la carte de la paire, et non la carte la plus haute autre que la paire
         current = " "
         vpair = 0
         for i in sorted(hand):
@@ -279,7 +308,8 @@ class Odds(Manager):
                 if self.hand_to_value[i] > vpair:
                     vpair = self.hand_to_value[i]
         if vpair != 0:
-            return (True, self.value_to_hand[vpair])
+            # return (True, self.value_to_hand[vpair])
+            return (True, vpair)
         return False
 
     #pas nécéssaire
