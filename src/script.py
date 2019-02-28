@@ -155,4 +155,5 @@ if __name__ == '__main__':
     #enlever username de odds ca gosse en criss
     odds = Odds('romi')
     while True:
-        odds.test_function(odds.create_random_hand())
+        odds.test_board = []
+        odds.test_compare(odds.create_random_hand(), odds.create_random_hand())

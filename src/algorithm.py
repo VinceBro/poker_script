@@ -7,9 +7,9 @@ class Odds(Manager):
     def __init__(self, username):
         super().__init__(username)
 
-
         #TODO prends self.deck dans cards et enleve les cartes dans les mains
         #du joueur et les cartes dans community
+
         self.possible = r.choice(self.deck)
         self.played = self.hand + self.community
         self.testing_dict = {"hand" : [], "stats": {"roy_flush": [],"str_flush": [], "four_of_k" : [], "full_house": [], "flush": [], "straight" : [], "three_of_k": [], "two_pair": [], "pair" : [] }}
@@ -17,11 +17,12 @@ class Odds(Manager):
         self.tie = 0
         self.cunter = 0
         self.opHand = []
+        self.test_board = []
 
     def Rank(self, hand):
         rep = self.royal_flush(hand)
         if rep[0]:
-            return 9
+            return (9, None)
         rep = self.str_flush(hand)
         if rep[0]:
             return (8, rep[1])
@@ -51,20 +52,20 @@ class Odds(Manager):
 
     ## reste four of a kind, flush, three of a kind, two pair
     def compare(self, ourHand, opHand):
-        set_ourHand = set(ourHand_c)
-        set_ophand = set(opHand_c)
         ourHand_c = self.convert_to_value(ourHand)
         opHand_c = self.convert_to_value(opponentHand)
+        set_ourHand = set(ourHand_c)
+        set_ophand = set(opHand_c)
         self.cunter += 1
         ourRank = self.Rank(ourHand)
         opRank = self.Rank(opHand)
         win = "Win"
         loss = "Loss"
         tie = "Tie"
-        if ourRank > opRank:
-            self.ahead += 1
-        elif ourRank < opRank:
-            pass
+        if ourRank[0] > opRank[0]:
+            return win
+        elif ourRank[0] < opRank[0]:
+            return loss
         else:
             ##royal flush
             if ourRank[0] == 9:
@@ -85,12 +86,19 @@ class Odds(Manager):
                 elif ourRank[1] < opRank[1]:
                     return loss
                 else:
+                    set_ourHand.remove(ourRank[1])
+                    set_ophand.remove(opRank[1])
+                    if set_ourHand[-1] > set_ophand[-1]:
+                        return win
+                    elif set_ourHand[-1] < set_ophand[-1]:
+                        return loss
+                    else:
+                        return tie
+
                     ##### set des deux mains, on check pour la carte la plus forte,
                     ## si la carte la plus forte est le 4 of a kind, on va a l'index avant
                     ## et on sait que c'est la carte la plus forte
                     ### CAS 4 CARTES PAREILLES SUR LE BOARD
-
-                    pass
             ##full house
             elif ourRank[0] == 6:
                 if ourRank[1] > opRank[1]:
@@ -106,7 +114,33 @@ class Odds(Manager):
                         return tie
             ##flush
             elif ourRank[0] == 5:
-                pass
+                funny_list = []
+                angry_list = []
+                for carte in ourHand:
+                    if carte[1] == ourRank[1]:
+                        funny_list.append(carte[0])
+                    else:
+                        continue
+                for carte in opponentHand:
+                    if carte[1] == opRank[1]:
+                        angry.append(carte[0])
+                    else:
+                        continue
+                while len(angry_list)>5:
+                    angry_list.pop()
+                while len(funny_list)>5:
+                    funny_list.pop()
+                angry_list = sorted(angry_list)
+                funny_list = sorted(funny_list)
+                for in in range(4):
+                    if funny_list[4-i]>angry_list[4-i]:
+                        return win
+                    elif funny_list[4-i]<angry_list[4-i]:
+                        return loss
+                    else:
+                        continue
+                return tie
+
             ##straight
             elif ourRank[0] == 4:
                 if ourRank[1] > opRank[1]:
@@ -117,10 +151,51 @@ class Odds(Manager):
                     return tie
             ##three of a kind
             elif ourRank[0] == 3:
+                if ourRank[1] > opRank[1]:
+                    return win
+                elif: ourRank[1] < opRank[1]:
+                    return loss
+                else:
+                    set_ourHand.remove(ourRank[1])
+                    set_ophand.remove(opRank[1])
+
+                    ## Pourrait être changé pour un for
+                    if set_ourHand[-1] > set_ophand[-1]:
+                        return win
+                    elif set_ourHand[-1] < set_ophand[-1]:
+                        return loss
+                    else:
+                        if set_ourHand[-2] > set_ophand[-2]:
+                            return win
+                        elif set_ourHand[-2] < set_ophand[-2]:
+                            return loss
+                        else:
+                            return tie
+
                 pass
             ##two_pair
             elif ourRank[0] == 2:
-                pass
+
+                for i in range(3)[:1]:
+
+                    if ourRank[i] > opRank[i]:
+                        return win
+                    elif ourRank[i] < opRank[i]:
+                        return loss
+                    else:
+                        continue
+                    set_ourHand.remove(ourRank[i])
+                    set_ophand.remove(opRank[i])
+
+                #si les 2 cartes de la paire sont dans la main
+                for i in range(3):
+                    if set_ourHand[i] > set_ophand[i]:
+                        return win
+                    elif set_ourHand[i] < set_ophand[i]:
+                        return loss
+                    else:
+                        continue
+                return tie
             ##pair
             elif ourRank[0] == 1:
                 if ourRank[1] > opRank[1]:
@@ -128,10 +203,11 @@ class Odds(Manager):
                 elif ourRank[1] < opRank[1]:
                     return loss
                 else:
-                    len = len(set_ourHand)-1
+
                     set_ourHand.remove(ourRank[1])
                     set_ophand.remove(opRank[1])
-                    for i in range(2):
+                    len = len(set_ourHand)
+                    for i in range(len):
                         if set_ourHand[len-i] > set_ophand[len-i]:
                             return win
                         elif set_ourHand[len-i] < set_ophand[len-i]:
@@ -150,52 +226,6 @@ class Odds(Manager):
                     else:
                         continue
                     return tie
-
-            # if ourRank[0] == 0:
-            #     ourHand_values = self.convert_to_value(ourHand)
-            #     opHand_values = self.convert_to_value(opponentHand)
-            #     for i in
-
-
-
-
-
-
-            #### toutes les exceptions
-            # if ourRank[0] == 0:
-            #     if ourHand_values[1] > opHand_values[1]:
-            #         self.ahead += 1
-            #     elif ourHand_values[1] < opHand_values[1]:
-            #         pass
-            #     else:
-            #         if ourHand_values[0] > opHand_values[0]:
-            #             self.ahead += 1
-            #         elif ourHand_values[0] == opHand_values[0]:
-            #             self.tie += 1
-            #         else:
-            #             pass
-            #
-            # elif ourRank[0] == 1
-            #     if ourRank[1] > opRank[1]:
-            #         self.ahead += 1
-            #     elif ourRank[1] < opRank[1]:
-            #         pass
-            #     else:
-            #         ### on doit faire une liste des 5 meilleures cartes pour chaque
-            #         ### joueur et itérer sur chacune des listes pour voir qui flanche en premier
-            #         ## si la condition de A>B n'est jamais rencontrée, on assume que A == B,
-            #         ## donc égalité
-            #         pass
-            #         ## à terminer
-
-
-
-
-
-
-
-
-
         return None
 
     def HandStrength(self):
@@ -222,30 +252,44 @@ class Odds(Manager):
 
     def convert_to_value(self, hand):
         return sorted([self.hand_to_value[carte] for carte in hand])
-    # TODO: compare est la fonction qui sera appelée 1000000 fois
-    #elle doit donc être extrêmement efficace
 
     ###FOR TEST PURPOSES
     def test_function(self, hand):
         wait = ""
         dict = {"hand" : [], "stats": {"roy_flush": self.roy_flush(hand),"str_flush": self.str_flush(hand), "four_of_k" : self.four_of_k(hand), "full_house": self.full_house(hand), "flush": self.flush(hand), "straight" : self.straight(hand), "three_of_k": self.three_of_k(hand), "two_pair": self.two_pair(hand), "pair" : self.pair(hand) }}
         for function in dict["stats"]:
-            dict["stats"][function]
-            print("This is the current hand: " + str(hand))
+            ## prochaine ligne jcomprends pas pk est la
+            #dict["stats"][function]
+            print("These are the current hands: " + str(hand1))
             print("For function: " + function)
             print("Current output is: " + str(dict["stats"][function]))
             wait = input("Press enter to continue")
+    def test_compare(self, ourhand, ophand):
+        print("This is our hand: " + str(ourhand))
+        print("This is not our hand (opponent): " + str(ophand))
+        print("Output of the round is: " + self.compare(ourHand, opHand))
 
-    ###FOR TEST PURPOSES
     def create_random_hand(self):
         temp_hand = copy.copy(self.deck)
         ret_hand = []
-        possible_length = [5, 6, 7]
+        while len(ret_hand < 2):
+            if r.choice(self.deck) not in self.test_board:
+                ret_hand.append(r.choice(temp_hand))
+            else:
+                continue
+        ret_hand.append(self.test_board)
+        return ret_hand
+
+    ###FOR TEST PURPOSES
+    def create_random_board(self):
+        temp_hand = copy.copy(self.deck)
+        ret_hand = []
+        possible_length = [3, 4, 5]
         for i in range(r.choice(possible_length)):
             choice = r.choice(temp_hand)
             ret_hand.append(choice)
             temp_hand.remove(choice)
-        return ret_hand
+        self.test_board = ret_hand
 
 
 
