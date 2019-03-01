@@ -51,43 +51,49 @@ class Odds(Manager):
         return (0, rep[0])
 
     ## reste four of a kind, flush, three of a kind, two pair
-    def compare(self, ourHand, opHand):
+    def compare(self, ourHand, opponentHand):
         ourHand_c = self.convert_to_value(ourHand)
         opHand_c = self.convert_to_value(opponentHand)
         set_ourHand = set(ourHand_c)
         set_ophand = set(opHand_c)
         self.cunter += 1
         ourRank = self.Rank(ourHand)
-        opRank = self.Rank(opHand)
+        opponentRank = self.Rank(opponentHand)
         win = "Win"
         loss = "Loss"
         tie = "Tie"
-        if ourRank[0] > opRank[0]:
+        # if ourRank[0] > opRank[0]:
+        #     return win
+        # elif ourRank[0] < opRank[0]:
+        #     return loss
+        # else:
+        if ourRank[0] > opponentRank[0]:
             return win
-        elif ourRank[0] < opRank[0]:
+        elif ourRank[0] < opponentRank[0]:
             return loss
         else:
+
             ##royal flush
             if ourRank[0] == 9:
                 return tie
 
             ## straigth flush
             elif ourRank[0] == 8:
-                if ourRank[1] > opRank[1]:
+                if ourRank[1] > opponentRank[1]:
                     return win
-                elif ourRank[1] < opRank[1]:
+                elif ourRank[1] < opponentRank[1]:
                     return loss
                 else:
                     return tie
             ##four of a kind
             elif ourRank[0] == 7:
-                if ourRank[1] > opRank[1]:
+                if ourRank[1] > opponentRank[1]:
                     return win
-                elif ourRank[1] < opRank[1]:
+                elif ourRank[1] < opponentRank[1]:
                     return loss
                 else:
                     set_ourHand.remove(ourRank[1])
-                    set_ophand.remove(opRank[1])
+                    set_ophand.remove(opponentRank[1])
                     if set_ourHand[-1] > set_ophand[-1]:
                         return win
                     elif set_ourHand[-1] < set_ophand[-1]:
@@ -101,14 +107,14 @@ class Odds(Manager):
                     ### CAS 4 CARTES PAREILLES SUR LE BOARD
             ##full house
             elif ourRank[0] == 6:
-                if ourRank[1] > opRank[1]:
+                if ourRank[1] > opponentRank[1]:
                     return win
-                elif ourRank[1] < opRank[1]:
+                elif ourRank[1] < opponentRank[1]:
                     return loss
                 else:
-                    if ourRank[2] > opRank[2]:
+                    if ourRank[2] > opponentRank[2]:
                         return win
-                    elif ourRank[2] < opRank[2]:
+                    elif ourRank[2] < opponentRank[2]:
                         return loss
                     else:
                         return tie
@@ -122,7 +128,7 @@ class Odds(Manager):
                     else:
                         continue
                 for carte in opponentHand:
-                    if carte[1] == opRank[1]:
+                    if carte[1] == opponentRank[1]:
                         angry.append(carte[0])
                     else:
                         continue
@@ -132,7 +138,7 @@ class Odds(Manager):
                     funny_list.pop()
                 angry_list = sorted(angry_list)
                 funny_list = sorted(funny_list)
-                for in in range(4):
+                for i in range(4):
                     if funny_list[4-i]>angry_list[4-i]:
                         return win
                     elif funny_list[4-i]<angry_list[4-i]:
@@ -143,21 +149,21 @@ class Odds(Manager):
 
             ##straight
             elif ourRank[0] == 4:
-                if ourRank[1] > opRank[1]:
+                if ourRank[1] > opponentRank[1]:
                     return win
-                elif ourRank[1] < opRank[1]:
+                elif ourRank[1] < opponentRank[1]:
                     return loss
                 else:
                     return tie
             ##three of a kind
             elif ourRank[0] == 3:
-                if ourRank[1] > opRank[1]:
+                if ourRank[1] > opponentRank[1]:
                     return win
-                elif: ourRank[1] < opRank[1]:
+                elif ourRank[1] < opponentRank[1]:
                     return loss
                 else:
                     set_ourHand.remove(ourRank[1])
-                    set_ophand.remove(opRank[1])
+                    set_ophand.remove(opponentRank[1])
 
                     ## Pourrait être changé pour un for
                     if set_ourHand[-1] > set_ophand[-1]:
@@ -178,14 +184,14 @@ class Odds(Manager):
 
                 for i in range(3)[:1]:
 
-                    if ourRank[i] > opRank[i]:
+                    if ourRank[i] > opponentRank[i]:
                         return win
-                    elif ourRank[i] < opRank[i]:
+                    elif ourRank[i] < opponentRank[i]:
                         return loss
                     else:
                         continue
                     set_ourHand.remove(ourRank[i])
-                    set_ophand.remove(opRank[i])
+                    set_ophand.remove(opponentRank[i])
 
                 #si les 2 cartes de la paire sont dans la main
                 for i in range(3):
@@ -198,14 +204,14 @@ class Odds(Manager):
                 return tie
             ##pair
             elif ourRank[0] == 1:
-                if ourRank[1] > opRank[1]:
+                if ourRank[1] > opponentRank[1]:
                     return win
-                elif ourRank[1] < opRank[1]:
+                elif ourRank[1] < opponentRank[1]:
                     return loss
                 else:
 
                     set_ourHand.remove(ourRank[1])
-                    set_ophand.remove(opRank[1])
+                    set_ophand.remove(opponentRank[1])
                     len = len(set_ourHand)
                     for i in range(len):
                         if set_ourHand[len-i] > set_ophand[len-i]:
@@ -251,7 +257,11 @@ class Odds(Manager):
         return None
 
     def convert_to_value(self, hand):
-        return sorted([self.hand_to_value[carte] for carte in hand])
+        liste_drole = []
+        for carte in hand:
+            liste_drole.append(self.hand_to_value[carte])
+        return sorted(liste_drole)
+        # return sorted([self.hand_to_value[carte] for carte in hand])
 
     ###FOR TEST PURPOSES
     def test_function(self, hand):
@@ -267,12 +277,12 @@ class Odds(Manager):
     def test_compare(self, ourhand, ophand):
         print("This is our hand: " + str(ourhand))
         print("This is not our hand (opponent): " + str(ophand))
-        print("Output of the round is: " + self.compare(ourHand, opHand))
+        print("Output of the round is: " + self.compare(ourhand, ophand))
 
     def create_random_hand(self):
         temp_hand = copy.copy(self.deck)
         ret_hand = []
-        while len(ret_hand < 2):
+        while len(ret_hand) < 2:
             if r.choice(self.deck) not in self.test_board:
                 ret_hand.append(r.choice(temp_hand))
             else:
