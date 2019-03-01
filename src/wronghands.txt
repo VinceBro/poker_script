@@ -4,4 +4,15 @@ returns straight(False)
 ['Qh', '9s', 'Jd', '6s', '6c', 'Th', 'Kc']
 ##Logic problem in straight
 
-##Str_flush doesn't check if
+
+
+
+## Test de compare
+prob: Pair marche pas
+ex :
+This is our hand: ['6c', '5h', 'Jh', 'Kh', '3c']
+This is not our hand (opponent): ['Kd', 'Qh', 'Jh', 'Kh', '3c']
+Output if the round is: Loss with High card
+This is our hand: ['6h', '3c', '5d', 'Js', 'Ad', 'Kc']
+This is not our hand (opponent): ['Jc', '9c', '5d', 'Js', 'Ad', 'Kc']
+Output if the round is: Loss with High card
