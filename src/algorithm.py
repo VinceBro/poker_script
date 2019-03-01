@@ -20,8 +20,8 @@ class Odds(Manager):
         self.test_board = []
 
     def Rank(self, hand):
-        rep = self.royal_flush(hand)
-        if rep[0]:
+        rep = self.roy_flush(hand)
+        if rep:
             return (9, None)
         rep = self.str_flush(hand)
         if rep[0]:
@@ -257,10 +257,7 @@ class Odds(Manager):
         return None
 
     def convert_to_value(self, hand):
-        liste_drole = []
-        for carte in hand:
-            liste_drole.append(self.hand_to_value[carte])
-        return sorted(liste_drole)
+        return sorted([self.hand_to_value[carte] for carte in hand])
         # return sorted([self.hand_to_value[carte] for carte in hand])
 
     ###FOR TEST PURPOSES
@@ -287,6 +284,7 @@ class Odds(Manager):
                 ret_hand.append(r.choice(temp_hand))
             else:
                 continue
+
         ret_hand.append(self.test_board)
         return ret_hand
 
@@ -320,14 +318,16 @@ class Odds(Manager):
         except TypeError:
             return False
 
+        return False
+
     def str_flush(self, hand):
         str8 = self.straight(hand)
         try:
             if str8[0] and self.flush(hand)[0]:
                 return (True, self.hand_to_value[str8[1]])
         except TypeError:
-            return False
-        return False
+            return (False, None)
+        return (False, None)
 
 
     def four_of_k(self, hand):
@@ -341,7 +341,7 @@ class Odds(Manager):
                 counter += 1
             if counter >= 4:
                 return (True, self.hand_to_value[current])
-        return False
+        return (False, None)
 
     #returns (True, three_of_k, pair)
     ###PAS ENCORE TESTÉ CETTE FONCTION LA
@@ -357,7 +357,8 @@ class Odds(Manager):
                 if pair[0]:
                     return(True, self.hand_to_value[three[1]], self.hand_to_value[pair[1]])
         except TypeError:
-            return False
+            return (False, None)
+        return(False, None)
 
 
     ###PAS ENCORE TESTÉ CETTE FONCTION LA
@@ -395,7 +396,7 @@ class Odds(Manager):
             return (True,currentc)
         elif counterh >= 5:
             return (True,currenth)
-        return False
+        return (False, None)
 
     def straight(self, hand):
         suite = 0
@@ -423,7 +424,7 @@ class Odds(Manager):
                 suite = 0
         if suite >= 4:
             return (True, str8[-1])
-        return False
+        return (False, None)
 
     def three_of_k(self, hand):
         counter = 1
@@ -436,7 +437,7 @@ class Odds(Manager):
                 counter += 1
             if counter >= 3:
                 return (True, self.hand_to_value[current])
-        return False
+        return (False, None)
 
     ###PAS TESTÉ CETTE FONCTION LA ENCORE
     def two_pair(self, hand):
@@ -453,7 +454,8 @@ class Odds(Manager):
             if p2[0]:
                 return (True, self.hand_to_value[p1[1]], self.hand_to_value[p2[1]])
         except TypeError:
-            return False
+            return (False, None)
+        return (False, None)
 
     def pair(self, hand):
         ### à checker, doit retourner la carte de la paire, et non la carte la plus haute autre que la paire
@@ -468,7 +470,7 @@ class Odds(Manager):
         if vpair != 0:
             # return (True, self.value_to_hand[vpair])
             return (True, vpair)
-        return False
+        return (False, None)
 
     def high_card(self, hand):
         if self.hand_to_value[hand[0]] > self.hand_to_value[hand[1]]:
