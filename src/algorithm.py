@@ -52,6 +52,7 @@ class Odds(Manager):
 
     ## reste four of a kind, flush, three of a kind, two pair
     def compare(self, ourHand, opponentHand):
+        length = 0
         ourHand_c = self.convert_to_value(ourHand)
         opHand_c = self.convert_to_value(opponentHand)
         set_ourHand = set(ourHand_c)
@@ -194,6 +195,8 @@ class Odds(Manager):
                     set_ophand.remove(opponentRank[i])
 
                 #si les 2 cartes de la paire sont dans la main
+
+                #ca chie ici tu peux pas index des sets!!
                 for i in range(3):
                     if set_ourHand[i] > set_ophand[i]:
                         return win
@@ -212,22 +215,22 @@ class Odds(Manager):
 
                     set_ourHand.remove(ourRank[1])
                     set_ophand.remove(opponentRank[1])
-                    len = len(set_ourHand)
-                    for i in range(len):
-                        if set_ourHand[len-i] > set_ophand[len-i]:
+                    length = len(set_ourHand)
+                    for i in range(length):
+                        if set_ourHand[length-i] > set_ophand[length-i]:
                             return win
-                        elif set_ourHand[len-i] < set_ophand[len-i]:
+                        elif set_ourHand[length-i] < set_ophand[length-i]:
                             return loss
                         else:
                             continue
                     return tie
             ##high card
             elif ourRank[0] == 0:
-                len = len(ourHand)-1
-                for i in range(len):
-                    if ourHand_c[len-i] > opHand_c[len-i]:
+                length = len(ourHand)-1
+                for i in range(length):
+                    if ourHand_c[length-i] > opHand_c[length-i]:
                         return win
-                    elif ourHand_c[len-i] < opHand_c[len-i]:
+                    elif ourHand_c[length-i] < opHand_c[length-i]:
                         return loss
                     else:
                         continue
@@ -285,7 +288,7 @@ class Odds(Manager):
             else:
                 continue
 
-        ret_hand.append(self.test_board)
+        ret_hand = ret_hand + self.test_board
         return ret_hand
 
     ###FOR TEST PURPOSES
@@ -355,7 +358,7 @@ class Odds(Manager):
                         temp_hand.remove(carte)
                 pair = self.pair(temp_hand)
                 if pair[0]:
-                    return(True, self.hand_to_value[three[1]], self.hand_to_value[pair[1]])
+                    return(True, three[1], pair[1])
         except TypeError:
             return (False, None)
         return(False, None)
@@ -436,7 +439,7 @@ class Odds(Manager):
             elif current == i[0]:
                 counter += 1
             if counter >= 3:
-                return (True, self.hand_to_value[current])
+                return (True, current)
         return (False, None)
 
     ###PAS TESTÉ CETTE FONCTION LA ENCORE
@@ -448,11 +451,9 @@ class Odds(Manager):
                 for i in hand:
                     if i[0] == p1[1]:
                         temp_hand.remove(i)
-            print(p1)
             p2 = self.pair(temp_hand)
-            print(p2)
             if p2[0]:
-                return (True, self.hand_to_value[p1[1]], self.hand_to_value[p2[1]])
+                return (True, p1[1], p2[1])
         except TypeError:
             return (False, None)
         return (False, None)
