@@ -18,6 +18,7 @@ class Odds(Manager):
         self.cunter = 0
         self.opHand = []
         self.test_board = []
+        self.current_deck = []
 
     def Rank(self, hand):
         rep = self.roy_flush(hand)
@@ -158,8 +159,8 @@ class Odds(Manager):
                 elif ourRank[1] < opponentRank[1]:
                     return (loss, opponentRank[0])
                 else:
-                    set_ourHand.remove(ourRank[1])
-                    set_ophand.remove(opponentRank[1])
+                    list(set_ourHand.remove(ourRank[1]))
+                    list(set_ophand.remove(opponentRank[1]))
 
                     ## Pourrait être changé pour un for
                     if set_ourHand[-1] > set_ophand[-1]:
@@ -178,8 +179,11 @@ class Odds(Manager):
             ##two_pair
             elif ourRank[0] == 2:
                 # for i in range(3)[:1]:
-                for i in range(3):
-
+                for i in range(3)[1:]:
+                    ##probleme ici
+                    print(ourRank)
+                    print(opponentRank)
+                    print(i)
                     if ourRank[i] > opponentRank[i]:
                         return (win, ourRank[0])
                     elif ourRank[i] < opponentRank[i]:
@@ -192,6 +196,8 @@ class Odds(Manager):
                 #si les 2 cartes de la paire sont dans la main
 
                 #ca chie ici tu peux pas index des sets!!
+                list(set_ophand)
+                list(set_ourHand)
                 for i in range(3):
                     if set_ourHand[i] > set_ophand[i]:
                         return (win, ourRank[0])
@@ -208,10 +214,11 @@ class Odds(Manager):
                     return (loss, opponentRank[0])
                 else:
 
-                    set_ourHand.remove(ourRank[1])
-                    set_ophand.remove(opponentRank[1])
+                    list(set_ourHand.remove(ourRank[1]))
+                    list(set_ophand.remove(opponentRank[1]))
                     length = len(set_ourHand)
                     for i in range(length):
+                        ###ya un probleme ici
                         if set_ourHand[length-i] > set_ophand[length-i]:
                             return (win, ourRank[0])
                         elif set_ourHand[length-i] < set_ophand[length-i]:
@@ -296,27 +303,27 @@ class Odds(Manager):
             print("Output if the round is: " + rep[0] + " with High card")
         else:
             print("On a un bug ici mon ami")
+
+
     def create_random_hand(self):
-        temp_hand = copy.copy(self.deck)
         ret_hand = []
-        while len(ret_hand) < 2:
-            if r.choice(self.deck) not in self.test_board:
-                ret_hand.append(r.choice(temp_hand))
-            else:
-                continue
+        for i in range(2):
+            choice = r.choice(self.current_deck)
+            ret_hand.append(choice)
+            self.current_deck.remove(choice)
 
         ret_hand = ret_hand + self.test_board
         return ret_hand
 
     ###FOR TEST PURPOSES
     def create_random_board(self):
-        temp_hand = copy.copy(self.deck)
+        self.current_deck = copy.copy(self.deck)
         ret_hand = []
         possible_length = [3, 4, 5]
         for i in range(r.choice(possible_length)):
-            choice = r.choice(temp_hand)
+            choice = r.choice(self.current_deck)
             ret_hand.append(choice)
-            temp_hand.remove(choice)
+            self.current_deck.remove(choice)
         self.test_board = ret_hand
 
 

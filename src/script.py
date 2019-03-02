@@ -156,4 +156,5 @@ if __name__ == '__main__':
     odds = Odds('romi')
     while True:
         odds.test_board = []
+        odds.create_random_board()
         odds.test_compare(odds.create_random_hand(), odds.create_random_hand())
