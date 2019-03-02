@@ -177,8 +177,8 @@ class Odds(Manager):
                 pass
             ##two_pair
             elif ourRank[0] == 2:
-
-                for i in range(3)[:1]:
+                # for i in range(3)[:1]:
+                for i in range(3):
 
                     if ourRank[i] > opponentRank[i]:
                         return (win, ourRank[0])
@@ -229,8 +229,7 @@ class Odds(Manager):
                         return (loss, opponentRank[0])
                     else:
                         continue
-                    return (tie, ourRank[0])
-        return None
+                return (tie, ourRank[0])
 
     def HandStrength(self):
         # ahead = tied = behind = 0
@@ -273,6 +272,7 @@ class Odds(Manager):
         rep = self.compare(ourhand, ophand)
         print("This is our hand: " + str(ourhand))
         print("This is not our hand (opponent): " + str(ophand))
+        print(rep)
         #print("Output of the round is: " + self.compare(ourhand, ophand))
         if rep[1] == 9:
             print("Output if the round is: " + rep[0] + " with Royal Flush")
@@ -466,7 +466,7 @@ class Odds(Manager):
         try:
             if p1[0]:
                 for i in hand:
-                    if i[0] == p1[1]:
+                    if str(i[0]) == str(p1[1]):
                         temp_hand.remove(i)
             p2 = self.pair(temp_hand)
             if p2[0]:
