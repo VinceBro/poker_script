@@ -1,5 +1,5 @@
 import json, pickle, datetime, sys, time
-from script import manager
+# from script import Manager
 
 def initialize():
     if True:
@@ -14,7 +14,7 @@ def initialize():
 """)
         print("v0.0.5(beta)")
         print("Made by: jack_sparrow and davy_jones")
-        time.sleep(3)
+        # time.sleep(3)
     username = ' '
     username = input("Enter new/existing username: ")
     manager = {}
