@@ -16,3 +16,10 @@ Output if the round is: Loss with High card
 This is our hand: ['6h', '3c', '5d', 'Js', 'Ad', 'Kc']
 This is not our hand (opponent): ['Jc', '9c', '5d', 'Js', 'Ad', 'Kc']
 Output if the round is: Loss with High card
+
+ex 2:
+This is our hand: ['Jc', 'As', '2s', '9d', 'Kd', '6h']
+This is not our hand (opponent): ['4d', 'Kc', '2s', '9d', 'Kd', '6h']
+('Win', 0)
+Output if the round is: Win with High card
+

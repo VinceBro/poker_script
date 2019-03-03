@@ -44,7 +44,7 @@ class Odds(Manager):
             return (3, rep[1])
         rep = self.two_pair(hand)
         if rep[0]:
-            return (2, rep[1])
+            return (2, rep[1], rep[2])
         rep = self.pair(hand)
         if rep[0]:
             return (1, rep[1])
@@ -117,6 +117,7 @@ class Odds(Manager):
                         return (tie, ourRank[0])
             ##flush
             elif ourRank[0] == 5:
+                print("on aura pas le choix de refaire flush")
                 funny_list = []
                 angry_list = []
                 for carte in ourHand:
@@ -159,6 +160,10 @@ class Odds(Manager):
                 elif ourRank[1] < opponentRank[1]:
                     return (loss, opponentRank[0])
                 else:
+                    print(ourRank)
+                    print(opponentRank)
+                    print(set_ourHand)
+                    print(set_ophand)
                     list(set_ourHand.remove(ourRank[1]))
                     list(set_ophand.remove(opponentRank[1]))
 
@@ -196,12 +201,14 @@ class Odds(Manager):
                 #si les 2 cartes de la paire sont dans la main
 
                 #ca chie ici tu peux pas index des sets!!
-                list(set_ophand)
-                list(set_ourHand)
+
+                list_ophand = list(set_ophand)
+                list_ourhand = list(set_ourHand)
+
                 for i in range(3):
-                    if set_ourHand[i] > set_ophand[i]:
+                    if list_ourhand[i] > list_ophand[i]:
                         return (win, ourRank[0])
-                    elif set_ourHand[i] < set_ophand[i]:
+                    elif list_ourhand[i] < list_ophand[i]:
                         return (loss, opponentRank[0])
                     else:
                         continue
@@ -213,15 +220,20 @@ class Odds(Manager):
                 elif ourRank[1] < opponentRank[1]:
                     return (loss, opponentRank[0])
                 else:
-
-                    list(set_ourHand.remove(ourRank[1]))
-                    list(set_ophand.remove(opponentRank[1]))
-                    length = len(set_ourHand)
+                    ##bug ici
+                    import pdb; pdb.set_trace()
+                    print(set_ourHand)
+                    print(set_ophand)
+                    print(ourRank)
+                    print(opponentRank)
+                    sorted(set_ourHand.remove(ourRank[1]))
+                    sorted(set_ophand.remove(opponentRank[1]))
+                    length = len(list_ourHand)
                     for i in range(length):
                         ###ya un probleme ici
-                        if set_ourHand[length-i] > set_ophand[length-i]:
+                        if list_ourHand[length-i] > list_opHand[length-i]:
                             return (win, ourRank[0])
-                        elif set_ourHand[length-i] < set_ophand[length-i]:
+                        elif list_ourHand[length-i] < list_opHand[length-i]:
                             return (loss, opponentRank[0])
                         else:
                             continue
@@ -276,9 +288,9 @@ class Odds(Manager):
             print("Current output is: " + str(dict["stats"][function]))
             wait = input("Press enter to continue")
     def test_compare(self, ourhand, ophand):
-        rep = self.compare(ourhand, ophand)
         print("This is our hand: " + str(ourhand))
         print("This is not our hand (opponent): " + str(ophand))
+        rep = self.compare(ourhand, ophand)
         print(rep)
         #print("Output of the round is: " + self.compare(ourhand, ophand))
         if rep[1] == 9:
