@@ -367,7 +367,9 @@ class Odds(Manager):
                     self.behind += 1
                 else:
                     self.tied += 1
-        return((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind)**self.opponents)
+        print(bonheur)
+
+        return(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents)
                 #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
         print(len(self.poss_op_hands))
         print(self.poss_op_hands)
