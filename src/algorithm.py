@@ -10,271 +10,21 @@ class Odds(Manager):
         #TODO prends self.deck dans cards et enleve les cartes dans les mains
         #du joueur et les cartes dans community
 
-        self.possible = r.choice(self.deck)
+        self.poss_op_hands = []
         self.played = self.hand + self.community
         self.testing_dict = {"hand" : [], "stats": {"roy_flush": [],"str_flush": [], "four_of_k" : [], "full_house": [], "flush": [], "straight" : [], "three_of_k": [], "two_pair": [], "pair" : [] }}
         self.ahead = 0
         self.tie = 0
-        self.cunter = 0
+        self.behind = 0
         self.opHand = []
         self.test_board = []
         self.current_deck = []
 
-    def Rank(self, hand):
-        rep = self.roy_flush(hand)
-        if rep:
-            return (9, None)
-        rep = self.str_flush(hand)
-        if rep[0]:
-            return (8, rep[1])
-        rep = self.four_of_k(hand)
-        if rep[0]:
-            return (7, rep[1])
-        rep = self.full_house(hand)
-        if rep[0]:
-            return (6, rep[1], rep[2])
-        rep = self.flush(hand)
-        if rep[0]:
-            return (5, rep[1])
-        rep = self.straight(hand)
-        if rep[0]:
-            return (4, rep[1])
-        rep = self.three_of_k(hand)
-        if rep[0]:
-            return (3, rep[1])
-        rep = self.two_pair(hand)
-        if rep[0]:
-            return (2, rep[1], rep[2])
-        rep = self.pair(hand)
-        if rep[0]:
-            return (1, rep[1])
-        rep = self.high_card(hand)
-        return (0, rep[0])
-
-    ## reste four of a kind, flush, three of a kind, two pair
-    def compare(self, ourHand, opponentHand):
-        length = 0
-        ourHand_c = self.convert_to_value(ourHand)
-        opHand_c = self.convert_to_value(opponentHand)
-        set_ourHand = set(ourHand_c)
-        set_ophand = set(opHand_c)
-        self.cunter += 1
-        ourRank = self.Rank(ourHand)
-        opponentRank = self.Rank(opponentHand)
-        win = "Win"
-        loss = "Loss"
-        tie = "Tie"
-        if ourRank[0] > opponentRank[0]:
-            return (win, ourRank[0])
-        elif ourRank[0] < opponentRank[0]:
-            return (loss, opponentRank[0])
-        else:
-
-            ##royal flush
-            if ourRank[0] == 9:
-                return (tie, ourRank[0])
-
-            ## straigth flush
-            elif ourRank[0] == 8:
-                if ourRank[1] > opponentRank[1]:
-                    return (win, ourRank[0])
-                elif ourRank[1] < opponentRank[1]:
-                    return (loss, opponentRank[0])
-                else:
-                    return (tie, ourRank[0])
-            ##four of a kind
-            elif ourRank[0] == 7:
-                if ourRank[1] > opponentRank[1]:
-                    return (win, ourRank[0])
-                elif ourRank[1] < opponentRank[1]:
-                    return (loss, opponentRank[0])
-                else:
-                    set_ourHand.remove(ourRank[1])
-                    set_ophand.remove(opponentRank[1])
-                    if set_ourHand[-1] > set_ophand[-1]:
-                        return (win, ourRank[0])
-                    elif set_ourHand[-1] < set_ophand[-1]:
-                        return (loss, opponentRank[0])
-                    else:
-                        return (tie, ourRank[0])
-
-                    ##### set des deux mains, on check pour la carte la plus forte,
-                    ## si la carte la plus forte est le 4 of a kind, on va a l'index avant
-                    ## et on sait que c'est la carte la plus forte
-                    ### CAS 4 CARTES PAREILLES SUR LE BOARD
-            ##full house
-            elif ourRank[0] == 6:
-                if ourRank[1] > opponentRank[1]:
-                    return (win, ourRank[0])
-                elif ourRank[1] < opponentRank[1]:
-                    return (loss, opponentRank[0])
-                else:
-                    if ourRank[2] > opponentRank[2]:
-                        return (win, ourRank[0])
-                    elif ourRank[2] < opponentRank[2]:
-                        return (loss, opponentRank[0])
-                    else:
-                        return (tie, ourRank[0])
-            ##flush
-            elif ourRank[0] == 5:
-                print("on aura pas le choix de refaire flush")
-                funny_list = []
-                angry_list = []
-                for carte in ourHand:
-                    if carte[1] == ourRank[1]:
-                        funny_list.append(carte[0])
-                    else:
-                        continue
-                for carte in opponentHand:
-                    if carte[1] == opponentRank[1]:
-                        angry.append(carte[0])
-                    else:
-                        continue
-                while len(angry_list)>5:
-                    angry_list.pop()
-                while len(funny_list)>5:
-                    funny_list.pop()
-                angry_list = sorted(angry_list)
-                funny_list = sorted(funny_list)
-                for i in range(4):
-                    if funny_list[4-i]>angry_list[4-i]:
-                        return (win, ourRank[0])
-                    elif funny_list[4-i]<angry_list[4-i]:
-                        return (loss, opponentRank[0])
-                    else:
-                        continue
-                return (tie, ourRank[0])
-
-            ##straight
-            elif ourRank[0] == 4:
-                if ourRank[1] > opponentRank[1]:
-                    return (win, ourRank[0])
-                elif ourRank[1] < opponentRank[1]:
-                    return (loss, opponentRank[0])
-                else:
-                    return (tie, ourRank[0])
-            ##three of a kind
-            elif ourRank[0] == 3:
-                if ourRank[1] > opponentRank[1]:
-                    return (win, ourRank[0])
-                elif ourRank[1] < opponentRank[1]:
-                    return (loss, opponentRank[0])
-                else:
-                    print(ourRank)
-                    print(opponentRank)
-                    print(set_ourHand)
-                    print(set_ophand)
-                    list(set_ourHand.remove(ourRank[1]))
-                    list(set_ophand.remove(opponentRank[1]))
-
-                    ## Pourrait être changé pour un for
-                    if set_ourHand[-1] > set_ophand[-1]:
-                        return (win, ourRank[0])
-                    elif set_ourHand[-1] < set_ophand[-1]:
-                        return (loss, opponentRank[0])
-                    else:
-                        if set_ourHand[-2] > set_ophand[-2]:
-                            return (win, ourRank[0])
-                        elif set_ourHand[-2] < set_ophand[-2]:
-                            return (loss, opponentRank[0])
-                        else:
-                            return (tie, ourRank[0])
-
-                pass
-            ##two_pair
-            elif ourRank[0] == 2:
-                # for i in range(3)[:1]:
-                for i in range(3)[1:]:
-                    ##probleme ici
-                    print(ourRank)
-                    print(opponentRank)
-                    print(i)
-                    if ourRank[i] > opponentRank[i]:
-                        return (win, ourRank[0])
-                    elif ourRank[i] < opponentRank[i]:
-                        return (loss, opponentRank[0])
-                    else:
-                        continue
-                    set_ourHand.remove(ourRank[i])
-                    set_ophand.remove(opponentRank[i])
-
-                #si les 2 cartes de la paire sont dans la main
-
-                #ca chie ici tu peux pas index des sets!!
-
-                list_ophand = list(set_ophand)
-                list_ourhand = list(set_ourHand)
-
-                for i in range(3):
-                    if list_ourhand[i] > list_ophand[i]:
-                        return (win, ourRank[0])
-                    elif list_ourhand[i] < list_ophand[i]:
-                        return (loss, opponentRank[0])
-                    else:
-                        continue
-                return (tie, ourRank[0])
-            ##pair
-            elif ourRank[0] == 1:
-                if ourRank[1] > opponentRank[1]:
-                    return (win, ourRank[0])
-                elif ourRank[1] < opponentRank[1]:
-                    return (loss, opponentRank[0])
-                else:
-                    ##bug ici
-                    import pdb; pdb.set_trace()
-                    print(set_ourHand)
-                    print(set_ophand)
-                    print(ourRank)
-                    print(opponentRank)
-                    sorted(set_ourHand.remove(ourRank[1]))
-                    sorted(set_ophand.remove(opponentRank[1]))
-                    length = len(list_ourHand)
-                    for i in range(length):
-                        ###ya un probleme ici
-                        if list_ourHand[length-i] > list_opHand[length-i]:
-                            return (win, ourRank[0])
-                        elif list_ourHand[length-i] < list_opHand[length-i]:
-                            return (loss, opponentRank[0])
-                        else:
-                            continue
-                    return (tie, ourRank[0])
-            ##high card
-            elif ourRank[0] == 0:
-                length = len(ourHand)-1
-                for i in range(length):
-                    if ourHand_c[length-i] > opHand_c[length-i]:
-                        return (win, ourRank[0])
-                    elif ourHand_c[length-i] < opHand_c[length-i]:
-                        return (loss, opponentRank[0])
-                    else:
-                        continue
-                return (tie, ourRank[0])
-
-    def HandStrength(self):
-        # ahead = tied = behind = 0
-        # ourrank = Rank(ourcards, boardcards)
-        pass
-
-
-
-    def calculate(self):
-        """calcul de 1000 probabilités en fonction du nombre d'adversaires
-        , des cartes dans les mains du joueur et dans les mains des adversaires"""
-
-        for card in self.played:
-            self.possible.remove(card)
-
-
-        poss1 = self.possible
-        poss2 = self.possible
-        # TODO: deux possibilités qu'on enlevera la carte calculée à chaque
-        #fois pour parcourir toutes les possibilités en évitant le double dipping
-
-        return None
-
     def convert_to_value(self, hand):
-        return sorted([self.hand_to_value[carte] for carte in hand])
-        # return sorted([self.hand_to_value[carte] for carte in hand])
+        if isinstance(hand[0], str):
+            return sorted([self.hand_to_value[carte] for carte in hand])
+        else:
+            return hand
 
     ###FOR TEST PURPOSES
     def test_function(self, hand):
@@ -340,6 +90,278 @@ class Odds(Manager):
 
 
 
+    def update_deck(self):
+        # self.current_deck = [x for x in self.deck if not in self.played]
+        self.current_deck = copy.copy(self.deck)
+        self.played = set(self.played)
+        self.current_deck = list(filter(lambda x: x not in self.played, self.current_deck))
+
+    def Rank(self, hand):
+        rep = self.roy_flush(hand)
+        if rep:
+            return (9, None)
+        rep = self.str_flush(hand)
+        if rep[0]:
+            return (8, rep[1])
+        rep = self.four_of_k(hand)
+        if rep[0]:
+            return (7, rep[1])
+        rep = self.full_house(hand)
+        if rep[0]:
+            return (6, rep[1], rep[2])
+        rep = self.flush(hand)
+        if rep[0]:
+            return (5, rep[1])
+        rep = self.straight(hand)
+        if rep[0]:
+            return (4, rep[1])
+        rep = self.three_of_k(hand)
+        if rep[0]:
+            return (3, rep[1])
+        rep = self.two_pair(hand)
+        if rep[0]:
+            return (2, rep[1], rep[2])
+        rep = self.pair(hand)
+        if rep[0]:
+            return (1, rep[1])
+        rep = self.high_card(hand)
+        return (0, rep[0])
+
+    ## reste four of a kind, flush, three of a kind, two pair
+    def compare(self, ourHand, opponentHand):
+        length = 0
+        ourHand_c = self.convert_to_value(ourHand)
+        opHand_c = self.convert_to_value(opponentHand)
+        set_ourHand = set(ourHand_c)
+        set_opHand = set(opHand_c)
+        # self.cunter += 1
+        ourRank = self.Rank(ourHand)
+        opponentRank = self.Rank(opponentHand)
+        win = "Win"
+        loss = "Loss"
+        tie = "Tie"
+        if ourRank[0] > opponentRank[0]:
+            return (win, ourRank[0])
+        elif ourRank[0] < opponentRank[0]:
+            return (loss, opponentRank[0])
+        else:
+
+            ##royal flush
+            if ourRank[0] == 9:
+                return (tie, ourRank[0])
+
+            ## straigth flush
+            elif ourRank[0] == 8:
+                if ourRank[1] > opponentRank[1]:
+                    return (win, ourRank[0])
+                elif ourRank[1] < opponentRank[1]:
+                    return (loss, opponentRank[0])
+                else:
+                    return (tie, ourRank[0])
+            ##four of a kind
+            elif ourRank[0] == 7:
+                if ourRank[1] > opponentRank[1]:
+                    return (win, ourRank[0])
+                elif ourRank[1] < opponentRank[1]:
+                    return (loss, opponentRank[0])
+                else:
+                    set_ourHand.remove(ourRank[1])
+                    set_opHand.remove(opponentRank[1])
+                    list_ourHand = list(set_ourHand)
+                    list_opHand = list(set_opHand)
+                    list_ourHand.sort()
+                    list_opHand.sort()
+                    if list_ourHand[-1] > list_opHand[-1]:
+                        return (win, ourRank[0])
+                    elif list_ourHand[-1] < list_opHand[-1]:
+                        return (loss, opponentRank[0])
+                    else:
+                        return (tie, ourRank[0])
+
+                    ##### set des deux mains, on check pour la carte la plus forte,
+                    ## si la carte la plus forte est le 4 of a kind, on va a l'index avant
+                    ## et on sait que c'est la carte la plus forte
+                    ### CAS 4 CARTES PAREILLES SUR LE BOARD
+            ##full house
+            elif ourRank[0] == 6:
+                if ourRank[1] > opponentRank[1]:
+                    return (win, ourRank[0])
+                elif ourRank[1] < opponentRank[1]:
+                    return (loss, opponentRank[0])
+                else:
+                    if ourRank[2] > opponentRank[2]:
+                        return (win, ourRank[0])
+                    elif ourRank[2] < opponentRank[2]:
+                        return (loss, opponentRank[0])
+                    else:
+                        return (tie, ourRank[0])
+            ##flush
+            elif ourRank[0] == 5:
+                ourFlush = ourRank[1]
+                opponentFlush = opponentRank[1]
+
+                for i in range(5)[::-1]:
+                    if ourFlush[i] > opponentFlush[i]:
+                        return (win, ourRank[0])
+                    elif ourFlush[i] < opponentFlush[i]:
+                        return (loss, ourRank[0])
+                return (tie, ourRank[0])
+                # funny_list = [carte[0] for carte in ourHand if carte[1] == ourRank[1]]
+                # angry_list = [carte[0] for carte in opponentHand if carte[1] == opponentRank[1]]
+
+
+
+                # for carte in ourHand:
+                #     if carte[1] == ourRank[1]:
+                #         funny_list.append(carte[0])
+                #     else:
+                #         continue
+                # for carte in opponentHand:
+                #     if carte[1] == opponentRank[1]:
+                #         angry_list.append(carte[0])
+                #     else:
+                #         continue
+                # while len(angry_list)>5:
+                # input("s")
+                #     angry_list.pop()
+                # while len(funny_list)>5:
+                #     funny_list.pop()
+                # angry_list = sorted(angry_list)
+                # funny_list = sorted(funny_list)
+                # for i in range(4):
+                #     if funny_list[4-i]>angry_list[4-i]:
+                #         return (win, ourRank[0])
+                #     elif funny_list[4-i]<angry_list[4-i]:
+                #         return (loss, opponentRank[0])
+                #     else:
+                #         continue
+                # return (tie, ourRank[0])
+
+            ##straight
+            elif ourRank[0] == 4:
+                if ourRank[1] > opponentRank[1]:
+                    return (win, ourRank[0])
+                elif ourRank[1] < opponentRank[1]:
+                    return (loss, opponentRank[0])
+                else:
+                    return (tie, ourRank[0])
+            ##three of a kind
+            elif ourRank[0] == 3:
+                if ourRank[1] > opponentRank[1]:
+                    return (win, ourRank[0])
+                elif ourRank[1] < opponentRank[1]:
+                    return (loss, opponentRank[0])
+                else:
+                    set_ourHand.remove(ourRank[1])
+                    set_opHand.remove(opponentRank[1])
+                    list_ourHand = list(set_ourHand)
+                    list_opHand = list(set_opHand)
+                    list_ourHand.sort()
+                    list_opHand.sort()
+
+                    ## Pourrait être changé pour un for
+                    if set_ourHand[-1] > set_opHand[-1]:
+                        return (win, ourRank[0])
+                    elif set_ourHand[-1] < set_opHand[-1]:
+                        return (loss, opponentRank[0])
+                    else:
+                        if set_ourHand[-2] > set_opHand[-2]:
+                            return (win, ourRank[0])
+                        elif set_ourHand[-2] < set_opHand[-2]:
+                            return (loss, opponentRank[0])
+                        else:
+                            return (tie, ourRank[0])
+
+                pass
+            ##two_pair
+            elif ourRank[0] == 2:
+                # for i in range(3)[:1]:
+                for i in range(3)[1:]:
+                    ##probleme ici
+                    if ourRank[i] > opponentRank[i]:
+                        return (win, ourRank[0])
+                    elif ourRank[i] < opponentRank[i]:
+                        return (loss, opponentRank[0])
+                    else:
+                        continue
+                    set_ourHand.remove(ourRank[i])
+                    set_opHand.remove(opponentRank[i])
+
+                #si les 2 cartes de la paire sont dans la main
+
+                #ca chie ici tu peux pas index des sets!!
+
+                list_ophand = list(set_opHand)
+                list_ourhand = list(set_ourHand)
+
+                for i in range(3):
+                    if list_ourhand[i] > list_ophand[i]:
+                        return (win, ourRank[0])
+                    elif list_ourhand[i] < list_ophand[i]:
+                        return (loss, opponentRank[0])
+                    else:
+                        continue
+                return (tie, ourRank[0])
+            ##pair
+            elif ourRank[0] == 1:
+                if ourRank[1] > opponentRank[1]:
+                    return (win, ourRank[0])
+                elif ourRank[1] < opponentRank[1]:
+                    return (loss, opponentRank[0])
+                else:
+                    set_ourHand.remove(ourRank[1])
+                    set_opHand.remove(opponentRank[1])
+                    list_ourHand = list(set_ourHand)
+                    list_opHand = list(set_opHand)
+                    list_ourHand.sort()
+                    list_opHand.sort()
+                    length = len(list_ourHand) - 1
+                    for i in range(length):
+                        #import pdb; pdb.set_trace()
+                        ###ya un probleme ici
+                        if list_ourHand[length-i] > list_opHand[length-i]:
+                            return (win, ourRank[0])
+                        elif list_ourHand[length-i] < list_opHand[length-i]:
+                            return (loss, opponentRank[0])
+                        else:
+                            continue
+                    return (tie, ourRank[0])
+            ##high card
+            elif ourRank[0] == 0:
+                length = len(ourHand)-1
+                for i in range(length):
+                    if ourHand_c[length-i] > opHand_c[length-i]:
+                        return (win, ourRank[0])
+                    elif ourHand_c[length-i] < opHand_c[length-i]:
+                        return (loss, opponentRank[0])
+                    else:
+                        continue
+                return (tie, ourRank[0])
+
+    def calculate(self, hand):
+        """calcul de 1081 probabilités en fonction du nombre d'adversaires
+        , des cartes dans les mains du joueur et dans les mains des adversaires"""
+        self.ahead = self.tied = self.behind = 0
+        self.update_deck()
+        length = len(self.current_deck)
+        for i in range(length):
+            for j in range(i + 1, length):
+                bonheur = []
+                bonheur.append(self.current_deck[i])
+                bonheur.append(self.current_deck[j])
+                bonheur += self.community
+                output = self.compare(hand, bonheur)
+                if output[0] == "Win":
+                    self.ahead += 1
+                elif output[0] == "Loss":
+                    self.behind += 1
+                else:
+                    self.tied += 1
+        return((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))
+                #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
+        print(len(self.poss_op_hands))
+        print(self.poss_op_hands)
+
 
     #placé les fonctions dans l'ordre en fonction de leur force
     ###PAS ENCORE TESTÉ CELLE LA
@@ -360,26 +382,31 @@ class Odds(Manager):
         return False
 
     def str_flush(self, hand):
-        str8 = self.straight(hand)
-        try:
-            if str8[0] and self.flush(hand)[0]:
-                return (True, self.hand_to_value[str8[1]])
-        except TypeError:
-            return (False, None)
-        return (False, None)
+        flush = self.flush(hand)
+        if flush[0]:
+            str8 = self.straight(flush[1])
+            if str8[0]:
+                return (True, str8[1])
+        return(False, None)
+        # try:
+        #     if str8[0] and self.flush(hand)[0]:
+        #         return (True, self.hand_to_value[str8[1]])
+        # except TypeError:
+        #     return (False, None)
+        # return (False, None)
 
 
     def four_of_k(self, hand):
         counter = 1
-        current = " "
-        for i in sorted(hand):
-            if current != i[0]:
-                current = i[0]
+        current = 0
+        for i in self.convert_to_value(hand):
+            if current != i:
+                current = i
                 counter = 1
-            elif current == i[0]:
+            elif current == i:
                 counter += 1
             if counter >= 4:
-                return (True, self.hand_to_value[current])
+                return (True, current)
         return (False, None)
 
     #returns (True, three_of_k, pair)
@@ -387,54 +414,64 @@ class Odds(Manager):
     def full_house(self, hand):
         temp_hand = copy.copy(hand)
         three = self.three_of_k(hand)
-        try:
-            if three[0]:
-                for carte in hand:
-                    if carte[0] == three[1]:
-                        temp_hand.remove(carte)
-                pair = self.pair(temp_hand)
-                if pair[0]:
-                    return(True, three[1], pair[1])
-        except TypeError:
-            return (False, None)
+        if three[0]:
+            temp_hand = self.convert_to_value(temp_hand)
+            i = 0
+            while i<len(temp_hand):
+                # print(temp_hand[i])
+                if temp_hand[i] == three[1]:
+                    temp_hand.remove(temp_hand[i])
+                i+=1
+            pair = self.pair(temp_hand)
+            if pair[0]:
+                return(True, three[1], pair[1])
         return(False, None)
+    # def full_house(self, hand):
+    #     temp_hand = copy.copy(hand)
+    #     three = self.three_of_k(hand)
+    #
+    #     if three[0]:
+    #         for carte in hand:
+    #             if carte[0] == three[1]:
+    #                 temp_hand.remove(carte)
+    #         pair = self.pair(temp_hand)
+    #         if pair[0]:
+    #             return(True, three[1], pair[1])
+    #
+    #     return(False, None)
 
 
     ###PAS ENCORE TESTÉ CETTE FONCTION LA
     def flush(self, hand):
-        counterh = 0
-        currenth = 0
-        counterc = 0
-        currentc = 0
-        counters = 0
-        currents = 0
-        counterd = 0
-        currentd = 0
+        currenth = []
+        currentc = []
+        currents = []
+        currentd = []
         for i in hand:
             if i[1] == 'h':
-                counterh += 1
-                if self.hand_to_value[i] > currenth:
-                    currenth = self.hand_to_value[i]
+                currenth.append(self.hand_to_value[i])
             if i[1] == 'c':
-                counterc += 1
-                if self.hand_to_value[i] > currentc:
-                    currentc = self.hand_to_value[i]
+                currentc.append(self.hand_to_value[i])
             if i[1] == 's':
-                counters += 1
-                if self.hand_to_value[i] > currents:
-                    currents = self.hand_to_value[i]
+                currents.append(self.hand_to_value[i])
             if i[1] == 'd':
-                counterd += 1
-                if self.hand_to_value[i] > currentd:
-                    currentd = self.hand_to_value[i]
-        if counterd >= 5:
-            return (True, currentd)
-        elif counters >= 5:
-            return (True,currents)
-        elif counterc >= 5:
-            return (True,currentc)
-        elif counterh >= 5:
-            return (True,currenth)
+                currentd.append(self.hand_to_value[i])
+        if len(currentd) >= 5:
+            while len(currentd) > 5:
+                currentd.pop(0)
+            return (True,sorted(currentd))
+        elif len(currents) >= 5:
+            while len(currents) > 5:
+                currents.pop(0)
+            return (True,sorted(currents))
+        elif len(currentc) >= 5:
+            while len(currentc) > 5:
+                currentc.pop(0)
+            return (True,sorted(currentc))
+        elif len(currenth) >= 5:
+            while len(currenth) > 5:
+                currenth.pop(0)
+            return (True,sorted(currenth))
         return (False, None)
 
     def straight(self, hand):
@@ -446,11 +483,11 @@ class Odds(Manager):
 
         #Pour le cas unique A 2 3 4 5 (6) (7)
         if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
-            return(True, "7")
+            return(True, 7)
         elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
-            return(True, "6")
+            return(True, 6)
         elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
-            return(True, "5")
+            return(True, 5)
 
         for i in range(len(cartes_valeurs))[1:]:
             if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
@@ -468,11 +505,11 @@ class Odds(Manager):
     def three_of_k(self, hand):
         counter = 1
         current = " "
-        for i in sorted(hand):
-            if current != i[0]:
-                current = i[0]
+        for i in self.convert_to_value(hand):
+            if current != i:
+                current = i
                 counter = 1
-            elif current == i[0]:
+            elif current == i:
                 counter += 1
             if counter >= 3:
                 return (True, current)
@@ -480,32 +517,28 @@ class Odds(Manager):
 
     ###PAS TESTÉ CETTE FONCTION LA ENCORE
     def two_pair(self, hand):
-        temp_hand = copy.copy(hand)
-        p1 = self.pair(hand)
-        try:
-            if p1[0]:
-                for i in hand:
-                    if str(i[0]) == str(p1[1]):
-                        temp_hand.remove(i)
-            p2 = self.pair(temp_hand)
-            if p2[0]:
-                return (True, p1[1], p2[1])
-        except TypeError:
-            return (False, None)
+        reponse = self.pair(hand)
+        temp_hand = self.convert_to_value(copy.copy(hand))
+        for i in temp_hand:
+            if i == reponse[1]:
+                temp_hand.remove(i)
+        reponse2 = self.pair(temp_hand)
+        if reponse2[0]:
+            return (True,reponse[1], reponse2[1])
         return (False, None)
 
+
     def pair(self, hand):
-        ### à checker, doit retourner la carte de la paire, et non la carte la plus haute autre que la paire
         current = " "
         vpair = 0
+        hand = self.convert_to_value(hand)
         for i in hand:
-            if current != i[0]:
-                current = i[0]
-            elif current == i[0]:
-                if self.hand_to_value[i] > vpair:
-                    vpair = self.hand_to_value[i]
+            if current != i:
+                current = i
+            elif current == i:
+                if i > vpair:
+                    vpair = i
         if vpair != 0:
-            # return (True, self.value_to_hand[vpair])
             return (True, vpair)
         return (False, None)
 

@@ -23,3 +23,8 @@ This is not our hand (opponent): ['4d', 'Kc', '2s', '9d', 'Kd', '6h']
 ('Win', 0)
 Output if the round is: Win with High card
 
+straigth:
+ex main intéressante:
+
+This is our hand: ['7h', '4c', '8h', '5s', '4h', '6c', '3d']
+This is not our hand (opponent): ['2h', 'Ah', '8h', '5s', '4h', '6c', '3d']
