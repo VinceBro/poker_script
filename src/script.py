@@ -160,7 +160,7 @@ if __name__ == '__main__':
 
     while True:
 
-        odds.test_calculate()
+        odds.test_compare()
         input(" ")
 
     ## Pour tester compare

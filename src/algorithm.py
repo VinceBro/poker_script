@@ -11,33 +11,44 @@ class Odds(Manager):
         #du joueur et les cartes dans community
 
         self.poss_op_hands = []
-        self.played = self.hand + self.community
+        self.played = []
+        self.opplayed = []
         self.testing_dict = {"hand" : [], "stats": {"roy_flush": [],"str_flush": [], "four_of_k" : [], "full_house": [], "flush": [], "straight" : [], "three_of_k": [], "two_pair": [], "pair" : [] }}
         self.ahead = 0
         self.tie = 0
         self.behind = 0
         self.opHand = []
-        self.test_board = []
         self.current_deck = []
         self.opponents = 1
+        self.cunter = 0
 
     def convert_to_value(self, hand):
         if isinstance(hand[0], str):
             return sorted([self.hand_to_value[carte] for carte in hand])
         else:
             return hand
-    def make_hand(self):
-        self.played = self.hand + self.community
+
 
     ###FOR TEST PURPOSES
     def test_calculate(self):
+        start = time.time()
         self.played = []
+        self.cunter = 0
         self.opponents = r.choice([1, 2, 3, 4, 5, 6, 7])
         self.create_random_board()
         self.create_random_hand()
+        self.played = self.hand + self.community
         print("This is your hand : " + str(self.hand) + " These are the community cards : " + str(self.community))
         print("Number of opponents is : " +  str(self.opponents))
-        print("Odds of winning are : " + str(self.calculate(self.played)))
+        print("\n" * 3)
+        print("Odds of winning are : " + str(self.calculate(self.played) * 100) + "%")
+        print("Wins : " + str(self.ahead) + "    Losses : " + str(self.behind) + "    Ties : " + str(self.tie))
+        print("Iterations : " + str(self.cunter))
+        end = time.time()
+        print("Execution time : " + str(end-start))
+        print('-' * 15)
+
+
     def test_function(self, hand):
         wait = ""
         dict = {"hand" : [], "stats": {"roy_flush": self.roy_flush(hand),"str_flush": self.str_flush(hand), "four_of_k" : self.four_of_k(hand), "full_house": self.full_house(hand), "flush": self.flush(hand), "straight" : self.straight(hand), "three_of_k": self.three_of_k(hand), "two_pair": self.two_pair(hand), "pair" : self.pair(hand) }}
@@ -48,10 +59,17 @@ class Odds(Manager):
             print("For function: " + function)
             print("Current output is: " + str(dict["stats"][function]))
             wait = input("Press enter to continue")
-    def test_compare(self, ourhand, ophand):
-        print("This is our hand: " + str(ourhand))
-        print("This is not our hand (opponent): " + str(ophand))
-        rep = self.compare(ourhand, ophand)
+
+    def test_compare(self):
+        self.create_random_board()
+        self.create_random_hand()
+        self.played = self.hand + self.community
+        print("This is our hand: " + str(self.hand))
+        self.create_random_hand()
+        self.opplayed = self.hand + self.community
+        print("This is not our hand (opponent): " + str(self.hand))
+        print("These are the community cards : " + str(self.community))
+        rep = self.compare(self.played, self.opplayed)
         print(rep)
         #print("Output of the round is: " + self.compare(ourhand, ophand))
         if rep[1] == 9:
@@ -96,7 +114,6 @@ class Odds(Manager):
             ret_hand.append(choice)
             self.current_deck.remove(choice)
         self.community = ret_hand
-        self.make_hand()
 
 
 
@@ -356,6 +373,7 @@ class Odds(Manager):
         length = len(self.current_deck)
         for i in range(length):
             for j in range(i + 1, length):
+                self.cunter += 1
                 bonheur = []
                 bonheur.append(self.current_deck[i])
                 bonheur.append(self.current_deck[j])
@@ -367,7 +385,6 @@ class Odds(Manager):
                     self.behind += 1
                 else:
                     self.tied += 1
-        print(bonheur)
 
         return(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents)
                 #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
@@ -559,5 +576,3 @@ class Odds(Manager):
             return (True, self.hand_to_value[hand[0]])
         else:
             return (True, self.hand_to_value[hand[1]])
-
-        # TODO: calcul de probabilités
