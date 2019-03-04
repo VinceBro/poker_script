@@ -149,16 +149,24 @@ def main(self):
     print("The odds of winning this hand are: " + str(self.odds))
 
 
+
+
 if __name__ == '__main__':
     manager = Manager('romi')
     cards = Cards()
     #enlever username de odds ca gosse en criss
     odds = Odds('romi')
     counter = 0
-    while counter < 1070190:
-        counter += 1
-        odds.test_board = []
-        odds.create_random_board()
-        odds.test_compare(odds.create_random_hand(), odds.create_random_hand())
-        input("")
-        print("\n" * 3)
+
+    while True:
+
+        odds.test_calculate()
+        input(" ")
+
+    ## Pour tester compare
+    # while True:
+    #     counter += 1
+    #     odds.test_board = []
+    #     odds.create_random_board()
+    #     odds.test_compare(odds.create_random_hand(), odds.create_random_hand())
+    #     print("\n" * 3)

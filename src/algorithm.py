@@ -19,14 +19,25 @@ class Odds(Manager):
         self.opHand = []
         self.test_board = []
         self.current_deck = []
+        self.opponents = 1
 
     def convert_to_value(self, hand):
         if isinstance(hand[0], str):
             return sorted([self.hand_to_value[carte] for carte in hand])
         else:
             return hand
+    def make_hand(self):
+        self.played = self.hand + self.community
 
     ###FOR TEST PURPOSES
+    def test_calculate(self):
+        self.played = []
+        self.opponents = r.choice([1, 2, 3, 4, 5, 6, 7])
+        self.create_random_board()
+        self.create_random_hand()
+        print("This is your hand : " + str(self.hand) + " These are the community cards : " + str(self.community))
+        print("Number of opponents is : " +  str(self.opponents))
+        print("Odds of winning are : " + str(self.calculate(self.played)))
     def test_function(self, hand):
         wait = ""
         dict = {"hand" : [], "stats": {"roy_flush": self.roy_flush(hand),"str_flush": self.str_flush(hand), "four_of_k" : self.four_of_k(hand), "full_house": self.full_house(hand), "flush": self.flush(hand), "straight" : self.straight(hand), "three_of_k": self.three_of_k(hand), "two_pair": self.two_pair(hand), "pair" : self.pair(hand) }}
@@ -73,9 +84,7 @@ class Odds(Manager):
             choice = r.choice(self.current_deck)
             ret_hand.append(choice)
             self.current_deck.remove(choice)
-
-        ret_hand = ret_hand + self.test_board
-        return ret_hand
+        self.hand = ret_hand
 
     ###FOR TEST PURPOSES
     def create_random_board(self):
@@ -86,7 +95,8 @@ class Odds(Manager):
             choice = r.choice(self.current_deck)
             ret_hand.append(choice)
             self.current_deck.remove(choice)
-        self.test_board = ret_hand
+        self.community = ret_hand
+        self.make_hand()
 
 
 
@@ -260,14 +270,14 @@ class Odds(Manager):
                     list_opHand.sort()
 
                     ## Pourrait être changé pour un for
-                    if set_ourHand[-1] > set_opHand[-1]:
+                    if list_ourHand[-1] > list_opHand[-1]:
                         return (win, ourRank[0])
-                    elif set_ourHand[-1] < set_opHand[-1]:
+                    elif list_ourHand[-1] < list_opHand[-1]:
                         return (loss, opponentRank[0])
                     else:
-                        if set_ourHand[-2] > set_opHand[-2]:
+                        if list_ourHand[-2] > list_opHand[-2]:
                             return (win, ourRank[0])
-                        elif set_ourHand[-2] < set_opHand[-2]:
+                        elif list_ourHand[-2] < list_opHand[-2]:
                             return (loss, opponentRank[0])
                         else:
                             return (tie, ourRank[0])
@@ -357,7 +367,7 @@ class Odds(Manager):
                     self.behind += 1
                 else:
                     self.tied += 1
-        return((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))
+        return((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind)**self.opponents)
                 #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
         print(len(self.poss_op_hands))
         print(self.poss_op_hands)
