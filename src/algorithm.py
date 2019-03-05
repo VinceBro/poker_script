@@ -1,5 +1,6 @@
 from script import *
 import random as r
+import numpy as np
 
 
 
@@ -13,6 +14,7 @@ class Odds(Manager):
         self.poss_op_hands = []
         self.played = []
         self.opplayed = []
+        self.all_4_cards = []
         self.testing_dict = {"hand" : [], "stats": {"roy_flush": [],"str_flush": [], "four_of_k" : [], "full_house": [], "flush": [], "straight" : [], "three_of_k": [], "two_pair": [], "pair" : [] }}
         self.ahead = 0
         self.tie = 0
@@ -29,6 +31,87 @@ class Odds(Manager):
             return sorted([self.hand_to_value[carte] for carte in hand])
         else:
             return hand
+
+    def create_all_4_cards(self):
+        self.all_4_cards = list(itertools.combinations(self.current_deck, 4))
+
+    def HandPotential(self, hand):
+        """calcul de 178,365 probabilitées après le flop pour prédire le nombre de
+        mains qui gagneront/perderont de la valeur après le turn et le river"""
+        self.update_deck()
+        HP_total = np.zeros((1,3))
+        HP = np.zeros((3,3))
+        # self.calculate()
+        # prob_array_calculate[0,0] = self.ahead
+        # prob_array_calculate[1,1] = self.tied
+        # prob_array_calculate[2,2] = self.behind
+        self.create_all_4_cards()
+        ahead = 0
+        behind = 2
+        tied = 1
+        length = len(self.current_deck)
+        for i in range(length):
+            for j in range(i + 1, length):
+                self.cunter += 1
+                bonheur = []
+                bonheur.append(self.current_deck[i])
+                bonheur.append(self.current_deck[j])
+                bonheur += self.community
+                output = self.compare(hand, bonheur)
+
+                ## win = 0, loss = 2, tie = 1
+                if output[0] == "Win":
+                    index = ahead
+                elif output[0] == "Loss":
+                    index = behind
+                else:
+                    index = tied
+                HP_total[0, index] += 1
+
+            #final 5 cards!!!
+                for i in range(len(self.all_4_cards)):
+                    print(list(self.played)+list(self.all_4_cards[i]))
+
+                    adjusted_rank = self.compare(list(self.played)+list(self.all_4_cards[i]), self.community+list(self.all_4_cards[i]))
+                    if adjusted_rank[0] == "Loss":
+                        HP[index,ahead] += 1
+                    elif adjusted_rank[0] == "Tie" and index == 2:
+                        HP[index,tied] += 1
+                    else:
+                        HP[index, behind] += 1
+
+        Ppot = (HP[behind, ahead]+(HP[behind, tied])/2 + (HP[tied,ahead])/2)/(HP_total[behind]+HP_total[tied])
+        Npot = (HP[ahead,behind]+HP[tied,behind]/2 + HP[ahead,tied]/2)/(HP_total[ahead]+HP_total[tied])
+
+        return (Ppot, Npot)
+
+
+
+    def calculate(self, hand):
+        """calcul de 1081 probabilités en fonction du nombre d'adversaires
+        , des cartes dans les mains du joueur et dans les mains des adversaires"""
+        self.ahead = self.tied = self.behind = 0
+        self.update_deck()
+        length = len(self.current_deck)
+        for i in range(length):
+            for j in range(i + 1, length):
+                self.cunter += 1
+                bonheur = []
+                bonheur.append(self.current_deck[i])
+                bonheur.append(self.current_deck[j])
+                bonheur += self.community
+                output = self.compare(hand, bonheur)
+                if output[0] == "Win":
+                    self.ahead += 1
+                elif output[0] == "Loss":
+                    self.behind += 1
+                else:
+                    self.tied += 1
+
+        return(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents)
+                #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
+        print(len(self.poss_op_hands))
+        print(self.poss_op_hands)
 
 
     ###FOR TEST PURPOSES
@@ -368,31 +451,7 @@ class Odds(Manager):
                         continue
                 return (tie, ourRank[0])
 
-    def calculate(self, hand):
-        """calcul de 1081 probabilités en fonction du nombre d'adversaires
-        , des cartes dans les mains du joueur et dans les mains des adversaires"""
-        self.ahead = self.tied = self.behind = 0
-        self.update_deck()
-        length = len(self.current_deck)
-        for i in range(length):
-            for j in range(i + 1, length):
-                self.cunter += 1
-                bonheur = []
-                bonheur.append(self.current_deck[i])
-                bonheur.append(self.current_deck[j])
-                bonheur += self.community
-                output = self.compare(hand, bonheur)
-                if output[0] == "Win":
-                    self.ahead += 1
-                elif output[0] == "Loss":
-                    self.behind += 1
-                else:
-                    self.tied += 1
 
-        return(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents)
-                #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
-        print(len(self.poss_op_hands))
-        print(self.poss_op_hands)
 
 
     #placé les fonctions dans l'ordre en fonction de leur force

@@ -157,13 +157,18 @@ if __name__ == '__main__':
     #enlever username de odds ca gosse en criss
     odds = Odds('romi')
     counter = 0
+    odds.played = ['3s', '4d', '5d', '6s','7d']
+    odds.update_deck()
+    # print(odds.create_all_4_cards())
+    print(odds.HandPotential(['3s','4d']))
 
-    while True:
 
-        odds.test_calculate()
-        # print(odds.cunter)
-        # odds.test_compare()
-        input("")
+    # while True:
+    #
+    #     odds.test_calculate()
+    #     # print(odds.cunter)
+    #     # odds.test_compare()
+    #     input("")
 
     ## Pour tester compare
     # while True:

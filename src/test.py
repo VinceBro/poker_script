@@ -1,6 +1,9 @@
 import itertools
 import copy
 import random as r
+import numpy as np
+
+print(np.zeros((1,3)))
 
 SUITS = 'cdhs'
 RANKS = '23456789TJQKA'
