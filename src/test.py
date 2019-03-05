@@ -17,38 +17,49 @@ hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, 
 'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
 from algorithm import *
 
-def pair(hand):
-    ### à checker, doit retourner la carte de la paire, et non la carte la plus haute autre que la paire
-    current = " "
-    vpair = 0
-    for i in hand:
-        if current != i[0]:
-            current = i[0]
-        elif current == i[0]:
-            if hand_to_value[i] > vpair:
-                vpair = hand_to_value[i]
-    if vpair != 0:
-        # return (True, self.value_to_hand[vpair])
-        return (True, vpair)
-    return (False, None)
+# def pair(hand):
+#     ### à checker, doit retourner la carte de la paire, et non la carte la plus haute autre que la paire
+#     current = " "
+#     vpair = 0
+#     for i in hand:
+#         if current != i[0]:
+#             current = i[0]
+#         elif current == i[0]:
+#             if hand_to_value[i] > vpair:
+#                 vpair = hand_to_value[i]
+#     if vpair != 0:
+#         # return (True, self.value_to_hand[vpair])
+#         return (True, vpair)
+#     return (False, None)
+#
+# def two_pair(hand):
+#     temp_hand = copy.copy(hand)
+#     p1 = pair(hand)
+#     try:
+#         if p1[0]:
+#             for i in hand:
+#
+#                 if int(i[0]) == int(p1[1]):
+#                     temp_hand.remove(i)
+#         print(temp_hand)
+#         p2 = pair(temp_hand)
+#         if p2[0]:
+#             return (True, p1[1], p2[1])
+#     except TypeError:
+#         return (False, None)
+#     return (False, None)
 
-def two_pair(hand):
-    temp_hand = copy.copy(hand)
-    p1 = pair(hand)
-    try:
-        if p1[0]:
-            for i in hand:
+def high_card(hand):
+    temp_hand = odds.convert_to_value(hand)
+    return (True, temp_hand[(len(temp_hand)%5):(len(temp_hand))])
 
-                if int(i[0]) == int(p1[1]):
-                    temp_hand.remove(i)
-        print(temp_hand)
-        p2 = pair(temp_hand)
-        if p2[0]:
-            return (True, p1[1], p2[1])
-    except TypeError:
-        return (False, None)
-    return (False, None)
+
 
 if __name__ == '__main__':
-    print(two_pair(['5s', '5d', '4d', '4s', '3s']))
-    print(pair(['5s', '5d']))
+    odds = Odds('romi')
+    main1 = ['4s','6s','8d','Td','As']
+    main2 = ['4s','6s','8d','Jd','Ts']
+    print(high_card(main1))
+    print(high_card(main2))
+    print('\n')
+    print(odds.compare(main1, main2))

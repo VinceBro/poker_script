@@ -40,7 +40,7 @@ class Odds(Manager):
         self.played = self.hand + self.community
         print("This is your hand : " + str(self.hand) + " These are the community cards : " + str(self.community))
         print("Number of opponents is : " +  str(self.opponents))
-        print("\n" * 3)
+        print("\n")
         print("Odds of winning are : " + str(self.calculate(self.played) * 100) + "%")
         print("Wins : " + str(self.ahead) + "    Losses : " + str(self.behind) + "    Ties : " + str(self.tie))
         print("Iterations : " + str(self.cunter))
@@ -152,7 +152,7 @@ class Odds(Manager):
         if rep[0]:
             return (1, rep[1])
         rep = self.high_card(hand)
-        return (0, rep[0])
+        return (0, rep[1])
 
     ## reste four of a kind, flush, three of a kind, two pair
     def compare(self, ourHand, opponentHand):
@@ -355,11 +355,10 @@ class Odds(Manager):
                     return (tie, ourRank[0])
             ##high card
             elif ourRank[0] == 0:
-                length = len(ourHand)-1
-                for i in range(length):
-                    if ourHand_c[length-i] > opHand_c[length-i]:
+                for i in list(range(len(ourHand)))[::-1]:
+                    if ourHand_c[i] > opHand_c[i]:
                         return (win, ourRank[0])
-                    elif ourHand_c[length-i] < opHand_c[length-i]:
+                    elif ourHand_c[i] < opHand_c[i]:
                         return (loss, opponentRank[0])
                     else:
                         continue
@@ -371,6 +370,7 @@ class Odds(Manager):
         self.ahead = self.tied = self.behind = 0
         self.update_deck()
         length = len(self.current_deck)
+        print(length)
         for i in range(length):
             for j in range(i + 1, length):
                 self.cunter += 1
@@ -417,13 +417,6 @@ class Odds(Manager):
             if str8[0]:
                 return (True, str8[1])
         return(False, None)
-        # try:
-        #     if str8[0] and self.flush(hand)[0]:
-        #         return (True, self.hand_to_value[str8[1]])
-        # except TypeError:
-        #     return (False, None)
-        # return (False, None)
-
 
     def four_of_k(self, hand):
         counter = 1
@@ -518,7 +511,9 @@ class Odds(Manager):
         elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
             return(True, 5)
 
-        for i in range(len(cartes_valeurs))[1:]:
+        for i in list(range(len(cartes_valeurs)))[1:]:
+            if suite >= 4:
+                return (True, str8[-1])
             if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
                 if str8 == []:
                     str8.append(cartes_valeurs[i-1])
@@ -527,8 +522,6 @@ class Odds(Manager):
             else:
                 str8 = []
                 suite = 0
-        if suite >= 4:
-            return (True, str8[-1])
         return (False, None)
 
     def three_of_k(self, hand):
@@ -572,7 +565,5 @@ class Odds(Manager):
         return (False, None)
 
     def high_card(self, hand):
-        if self.hand_to_value[hand[0]] > self.hand_to_value[hand[1]]:
-            return (True, self.hand_to_value[hand[0]])
-        else:
-            return (True, self.hand_to_value[hand[1]])
+        temp_hand = self.convert_to_value(hand)
+        return (True, temp_hand[(len(temp_hand)%5):(len(temp_hand))])

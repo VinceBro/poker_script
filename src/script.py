@@ -160,13 +160,20 @@ if __name__ == '__main__':
 
     while True:
 
-        odds.test_compare()
-        input(" ")
+        odds.test_calculate()
+        # print(odds.cunter)
+        # odds.test_compare()
+        input("")
 
     ## Pour tester compare
     # while True:
+    #     if test.
     #     counter += 1
     #     odds.test_board = []
     #     odds.create_random_board()
-    #     odds.test_compare(odds.create_random_hand(), odds.create_random_hand())
-    #     print("\n" * 3)
+    #     odds.test_compare()
+
+
+    # print(odds.compare(['2s', '3d','4d', 'Td', '6d'],['2s', '3d','4d', 'Td', '6d','5s']))
+
+        # print("\n" * 3)
