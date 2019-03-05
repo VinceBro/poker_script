@@ -23,6 +23,8 @@ class Odds(Manager):
         self.cunter = 0
 
     def convert_to_value(self, hand):
+        if isinstance(hand, set):
+            return hand
         if isinstance(hand[0], str):
             return sorted([self.hand_to_value[carte] for carte in hand])
         else:
@@ -38,11 +40,13 @@ class Odds(Manager):
         self.create_random_board()
         self.create_random_hand()
         self.played = self.hand + self.community
+        ##À vérifier: ajusted_odds = (self.calculate(self.played) * 100)**self.opponents
         print("Your hand : " + str(self.hand) + "  Community cards : " + str(self.community))
         print("# of opponents : " +  str(self.opponents))
         print("\n")
         print("Odds of winning : " + str(round(self.calculate(self.played) * 100, 2)) + "%")
-        print("Wins : " + str(self.ahead) + "    Losses : " + str(self.behind) + "    Ties : " + str(self.tie))
+        # print("Ajusted odds of winning(# players) : " + str(float(round((self.calculate(self.played) * 100))**self.opponents), 2) + "%")
+        print("Wins : " + str(self.ahead) + "    Losses : " + str(self.behind) + "    Ties : " + str(self.tied))
         print("Iterations : " + str(self.cunter))
         end = time.time()
         print("Execution time : " + str(round(end-start,3)) + 's')
@@ -173,7 +177,6 @@ class Odds(Manager):
         elif ourRank[0] < opponentRank[0]:
             return (loss, opponentRank[0])
         else:
-
             ##royal flush
             if ourRank[0] == 9:
                 return (tie, ourRank[0])
