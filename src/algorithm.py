@@ -38,15 +38,16 @@ class Odds(Manager):
         self.create_random_board()
         self.create_random_hand()
         self.played = self.hand + self.community
-        print("This is your hand : " + str(self.hand) + " These are the community cards : " + str(self.community))
-        print("Number of opponents is : " +  str(self.opponents))
+        print("Your hand : " + str(self.hand) + "  Community cards : " + str(self.community))
+        print("# of opponents : " +  str(self.opponents))
         print("\n")
-        print("Odds of winning are : " + str(self.calculate(self.played) * 100) + "%")
+        print("Odds of winning : " + str(round(self.calculate(self.played) * 100, 2)) + "%")
         print("Wins : " + str(self.ahead) + "    Losses : " + str(self.behind) + "    Ties : " + str(self.tie))
         print("Iterations : " + str(self.cunter))
         end = time.time()
-        print("Execution time : " + str(end-start))
-        print('-' * 15)
+        print("Execution time : " + str(round(end-start,3)) + 's')
+        print('_' * 55)
+
 
 
     def test_function(self, hand):
@@ -370,7 +371,6 @@ class Odds(Manager):
         self.ahead = self.tied = self.behind = 0
         self.update_deck()
         length = len(self.current_deck)
-        print(length)
         for i in range(length):
             for j in range(i + 1, length):
                 self.cunter += 1
