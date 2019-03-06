@@ -1,11 +1,204 @@
-from script import *
+from script import Cards, Manager
 import random as r
 
+class Cards(Manager):
+    def __init__(self):
+        super().__init__()
+        self.SUITS = 'cdhs'
+        self.RANKS = '23456789TJQKA'
+        self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
+        self.hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, '3s': 3,
+        '4c': 4, '4d': 4, '4h': 4, '4s': 4, '5c': 5, '5d': 5, '5h': 5, '5s': 5, '6c': 6, '6d': 6,
+        '6h': 6, '6s': 6, '7c': 7, '7d': 7, '7h': 7, '7s': 7, '8c': 8, '8d': 8, '8h': 8, '8s': 8,
+        '9c': 9, '9d': 9, '9h': 9, '9s': 9, 'Tc': 10, 'Td': 10, 'Th': 10, 'Ts': 10, 'Jc': 11,
+        'Jd': 11, 'Jh': 11, 'Js': 11, 'Qc': 12, 'Qd': 12, 'Qh': 12, 'Qs': 12, 'Kc': 13, 'Kd': 13,
+        'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
+
+        self.value_to_hand = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
+        10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
+    def __str__(self):
+        return self.deck
 
 
-class Odds(Manager):
+class Hands(Cards):
+    def __init__(self):
+        super().__init__()
+    def roy_flush(self, hand):
+        temp_hand = copy.copy(hand)
+        cartes_valeurs = self.convert_to_value(hand)
+        scartes = set(cartes_valeurs)
+        try:
+            if scartes.intersection({14, 13, 12, 11, 10}) == {14, 13, 12, 11, 10}:
+                for carte in hand:
+                    if self.hand_to_value[carte] != 14 or self.hand_to_value[carte]!= 13 or self.hand_to_value[carte] != 12 or self.hand_to_value[carte] != 11 or self.hand_to_value[carte] != 10:
+                        temp_hand.remove(carte)
+                if self.flush(temp_hand):
+                    return True
+        except TypeError:
+            return False
+
+        return False
+
+    def str_flush(self, hand):
+        str8 = self.straight(hand)
+        try:
+            if str8[0] and self.flush(hand)[0]:
+                return (True, self.hand_to_value[str8[1]])
+        except TypeError:
+            return (False, None)
+        return (False, None)
+
+
+    def four_of_k(self, hand):
+        counter = 1
+        current = " "
+        for i in sorted(hand):
+            if current != i[0]:
+                current = i[0]
+                counter = 1
+            elif current == i[0]:
+                counter += 1
+            if counter >= 4:
+                return (True, self.hand_to_value[current])
+        return (False, None)
+
+    #returns (True, three_of_k, pair)
+    ###PAS ENCORE TESTÉ CETTE FONCTION LA
+    def full_house(self, hand):
+        temp_hand = copy.copy(hand)
+        three = self.three_of_k(hand)
+        try:
+            if three[0]:
+                for carte in hand:
+                    if carte[0] == three[1]:
+                        temp_hand.remove(carte)
+                pair = self.pair(temp_hand)
+                if pair[0]:
+                    return(True, three[1], pair[1])
+        except TypeError:
+            return (False, None)
+        return(False, None)
+
+
+    ###PAS ENCORE TESTÉ CETTE FONCTION LA
+    def flush(self, hand):
+        counterh = 0
+        currenth = 0
+        counterc = 0
+        currentc = 0
+        counters = 0
+        currents = 0
+        counterd = 0
+        currentd = 0
+        for i in hand:
+            if i[1] == 'h':
+                counterh += 1
+                if self.hand_to_value[i] > currenth:
+                    currenth = self.hand_to_value[i]
+            if i[1] == 'c':
+                counterc += 1
+                if self.hand_to_value[i] > currentc:
+                    currentc = self.hand_to_value[i]
+            if i[1] == 's':
+                counters += 1
+                if self.hand_to_value[i] > currents:
+                    currents = self.hand_to_value[i]
+            if i[1] == 'd':
+                counterd += 1
+                if self.hand_to_value[i] > currentd:
+                    currentd = self.hand_to_value[i]
+        if counterd >= 5:
+            return (True, currentd)
+        elif counters >= 5:
+            return (True,currents)
+        elif counterc >= 5:
+            return (True,currentc)
+        elif counterh >= 5:
+            return (True,currenth)
+        return (False, None)
+
+    def straight(self, hand):
+        suite = 0
+        cartes_valeurs = self.convert_to_value(hand)
+        str8 = []
+        scartes = set(cartes_valeurs)
+
+
+        #Pour le cas unique A 2 3 4 5 (6) (7)
+        if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
+            return(True, "7")
+        elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
+            return(True, "6")
+        elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
+            return(True, "5")
+
+        for i in range(len(cartes_valeurs))[1:]:
+            if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
+                if str8 == []:
+                    str8.append(cartes_valeurs[i-1])
+                str8.append(cartes_valeurs[i])
+                suite += 1
+            else:
+                str8 = []
+                suite = 0
+        if suite >= 4:
+            return (True, str8[-1])
+        return (False, None)
+
+    def three_of_k(self, hand):
+        counter = 1
+        current = " "
+        for i in sorted(hand):
+            if current != i[0]:
+                current = i[0]
+                counter = 1
+            elif current == i[0]:
+                counter += 1
+            if counter >= 3:
+                return (True, current)
+        return (False, None)
+
+    ###PAS TESTÉ CETTE FONCTION LA ENCORE
+    def two_pair(self, hand):
+        temp_hand = copy.copy(hand)
+        p1 = self.pair(hand)
+        try:
+            if p1[0]:
+                for i in hand:
+                    if str(i[0]) == str(p1[1]):
+                        temp_hand.remove(i)
+            p2 = self.pair(temp_hand)
+            if p2[0]:
+                return (True, p1[1], p2[1])
+        except TypeError:
+            return (False, None)
+        return (False, None)
+
+    def pair(self, hand):
+        ### à checker, doit retourner la carte de la paire, et non la carte la plus haute autre que la paire
+        current = " "
+        vpair = 0
+        for i in hand:
+            if current != i[0]:
+                current = i[0]
+            elif current == i[0]:
+                if self.hand_to_value[i] > vpair:
+                    vpair = self.hand_to_value[i]
+        if vpair != 0:
+            # return (True, self.value_to_hand[vpair])
+            return (True, vpair)
+        return (False, None)
+
+    def high_card(self, hand):
+        if self.hand_to_value[hand[0]] > self.hand_to_value[hand[1]]:
+            return (True, self.hand_to_value[hand[0]])
+        else:
+            return (True, self.hand_to_value[hand[1]])
+
+
+class Odds(Hands):
     def __init__(self, username):
-        super().__init__(username)
+        super().__init__()
 
         #TODO prends self.deck dans cards et enleve les cartes dans les mains
         #du joueur et les cartes dans community

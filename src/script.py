@@ -2,28 +2,9 @@ import json, requests, pickle, datetime, sys, itertools, copy
 import random as r
 # import importlib
 # importlib.import_module(algorithm)
-from algorithm import *
 
-class Cards(object):
+class Manager(object):
     def __init__(self):
-        self.SUITS = 'cdhs'
-        self.RANKS = '23456789TJQKA'
-        self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
-        self.hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, '3s': 3,
-        '4c': 4, '4d': 4, '4h': 4, '4s': 4, '5c': 5, '5d': 5, '5h': 5, '5s': 5, '6c': 6, '6d': 6,
-        '6h': 6, '6s': 6, '7c': 7, '7d': 7, '7h': 7, '7s': 7, '8c': 8, '8d': 8, '8h': 8, '8s': 8,
-        '9c': 9, '9d': 9, '9h': 9, '9s': 9, 'Tc': 10, 'Td': 10, 'Th': 10, 'Ts': 10, 'Jc': 11,
-        'Jd': 11, 'Jh': 11, 'Js': 11, 'Qc': 12, 'Qd': 12, 'Qh': 12, 'Qs': 12, 'Kc': 13, 'Kd': 13,
-        'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
-
-        self.value_to_hand = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
-        10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
-    def __str__(self):
-        return self.deck
-
-class Manager(Cards):
-    def __init__(self, username):
-        super(Manager, self).__init__()
         self.counter = 0
         self.url = " "
         self.username = username
