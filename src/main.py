@@ -22,6 +22,8 @@ def initialize():
         return manager
 
     except FileNotFoundError or KeyError:
+        ## A RAJOUTER QUAND TOUTE VA FONCTIONNER::
+        # manager = Odds()
         return manager
 
         # while True:

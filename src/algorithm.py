@@ -1,12 +1,214 @@
 from script import *
-import random as r
 import numpy as np
 
+class Cards(Manager):
+    def __init__(self):
+        super().__init__()
+        self.SUITS = 'cdhs'
+        self.RANKS = '23456789TJQKA'
+        self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
+        self.hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, '3s': 3,
+        '4c': 4, '4d': 4, '4h': 4, '4s': 4, '5c': 5, '5d': 5, '5h': 5, '5s': 5, '6c': 6, '6d': 6,
+        '6h': 6, '6s': 6, '7c': 7, '7d': 7, '7h': 7, '7s': 7, '8c': 8, '8d': 8, '8h': 8, '8s': 8,
+        '9c': 9, '9d': 9, '9h': 9, '9s': 9, 'Tc': 10, 'Td': 10, 'Th': 10, 'Ts': 10, 'Jc': 11,
+        'Jd': 11, 'Jh': 11, 'Js': 11, 'Qc': 12, 'Qd': 12, 'Qh': 12, 'Qs': 12, 'Kc': 13, 'Kd': 13,
+        'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
+
+        self.value_to_hand = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
+        10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
+    def __str__(self):
+        return self.deck
 
 
-class Odds(Manager):
-    def __init__(self, username):
-        super().__init__(username)
+class Hands(Cards):
+    def __init__(self):
+        super().__init__()
+    def convert_to_value(self, hand):
+        if isinstance(hand, set):
+            return hand
+        if isinstance(hand[0], str):
+            return sorted([self.hand_to_value[carte] for carte in hand])
+        else:
+            return hand
+
+
+    def roy_flush(self, hand):
+        temp_hand = copy.copy(hand)
+        cartes_valeurs = self.convert_to_value(hand)
+        scartes = set(cartes_valeurs)
+        try:
+            if scartes.intersection({14, 13, 12, 11, 10}) == {14, 13, 12, 11, 10}:
+                for carte in hand:
+                    if self.hand_to_value[carte] != 14 or self.hand_to_value[carte]!= 13 or self.hand_to_value[carte] != 12 or self.hand_to_value[carte] != 11 or self.hand_to_value[carte] != 10:
+                        temp_hand.remove(carte)
+                if self.flush(temp_hand):
+                    return True
+        except TypeError:
+            return False
+
+        return False
+
+    def str_flush(self, hand):
+        flush = self.flush(hand)
+        if flush[0]:
+            str8 = self.straight(flush[1])
+            if str8[0]:
+                return (True, str8[1])
+        return(False, None)
+
+    def four_of_k(self, hand):
+        counter = 1
+        current = 0
+        for i in self.convert_to_value(hand):
+            if current != i:
+                current = i
+                counter = 1
+            elif current == i:
+                counter += 1
+            if counter >= 4:
+                return (True, current)
+        return (False, None)
+
+    #returns (True, three_of_k, pair)
+    ###PAS ENCORE TESTÉ CETTE FONCTION LA
+    def full_house(self, hand):
+        temp_hand = copy.copy(hand)
+        three = self.three_of_k(hand)
+        if three[0]:
+            temp_hand = self.convert_to_value(temp_hand)
+            i = 0
+            while i<len(temp_hand):
+                # print(temp_hand[i])
+                if temp_hand[i] == three[1]:
+                    temp_hand.remove(temp_hand[i])
+                i+=1
+            pair = self.pair(temp_hand)
+            if pair[0]:
+                return(True, three[1], pair[1])
+        return(False, None)
+    # def full_house(self, hand):
+    #     temp_hand = copy.copy(hand)
+    #     three = self.three_of_k(hand)
+    #
+    #     if three[0]:
+    #         for carte in hand:
+    #             if carte[0] == three[1]:
+    #                 temp_hand.remove(carte)
+    #         pair = self.pair(temp_hand)
+    #         if pair[0]:
+    #             return(True, three[1], pair[1])
+    #
+    #     return(False, None)
+
+
+    ###PAS ENCORE TESTÉ CETTE FONCTION LA
+    def flush(self, hand):
+        currenth = []
+        currentc = []
+        currents = []
+        currentd = []
+        for i in hand:
+            if i[1] == 'h':
+                currenth.append(self.hand_to_value[i])
+            if i[1] == 'c':
+                currentc.append(self.hand_to_value[i])
+            if i[1] == 's':
+                currents.append(self.hand_to_value[i])
+            if i[1] == 'd':
+                currentd.append(self.hand_to_value[i])
+        if len(currentd) >= 5:
+            while len(currentd) > 5:
+                currentd.pop(0)
+            return (True,sorted(currentd))
+        elif len(currents) >= 5:
+            while len(currents) > 5:
+                currents.pop(0)
+            return (True,sorted(currents))
+        elif len(currentc) >= 5:
+            while len(currentc) > 5:
+                currentc.pop(0)
+            return (True,sorted(currentc))
+        elif len(currenth) >= 5:
+            while len(currenth) > 5:
+                currenth.pop(0)
+            return (True,sorted(currenth))
+        return (False, None)
+
+    def straight(self, hand):
+        suite = 0
+        cartes_valeurs = self.convert_to_value(hand)
+        str8 = []
+        scartes = set(cartes_valeurs)
+
+
+        #Pour le cas unique A 2 3 4 5 (6) (7)
+        if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
+            return(True, 7)
+        elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
+            return(True, 6)
+        elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
+            return(True, 5)
+
+        for i in list(range(len(cartes_valeurs)))[1:]:
+            if suite >= 4:
+                return (True, str8[-1])
+            if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
+                if str8 == []:
+                    str8.append(cartes_valeurs[i-1])
+                str8.append(cartes_valeurs[i])
+                suite += 1
+            else:
+                str8 = []
+                suite = 0
+        return (False, None)
+
+    def three_of_k(self, hand):
+        counter = 1
+        current = " "
+        for i in self.convert_to_value(hand):
+            if current != i:
+                current = i
+                counter = 1
+            elif current == i:
+                counter += 1
+            if counter >= 3:
+                return (True, current)
+        return (False, None)
+
+    ###PAS TESTÉ CETTE FONCTION LA ENCORE
+    def two_pair(self, hand):
+        reponse = self.pair(hand)
+        temp_hand = self.convert_to_value(copy.copy(hand))
+        for i in temp_hand:
+            if i == reponse[1]:
+                temp_hand.remove(i)
+        reponse2 = self.pair(temp_hand)
+        if reponse2[0]:
+            return (True,reponse[1], reponse2[1])
+        return (False, None)
+
+
+    def pair(self, hand):
+        current = " "
+        vpair = 0
+        hand = self.convert_to_value(hand)
+        for i in hand:
+            if current != i:
+                current = i
+            elif current == i:
+                if i > vpair:
+                    vpair = i
+        if vpair != 0:
+            return (True, vpair)
+        return (False, None)
+
+    def high_card(self, hand):
+        temp_hand = self.convert_to_value(hand)
+        return (True, temp_hand[(len(temp_hand)%5):(len(temp_hand))])
+
+class Odds(Hands):
+    def __init__(self):
+        super().__init__()
 
         #TODO prends self.deck dans cards et enleve les cartes dans les mains
         #du joueur et les cartes dans community
@@ -23,14 +225,6 @@ class Odds(Manager):
         self.current_deck = []
         self.opponents = 1
         self.cunter = 0
-
-    def convert_to_value(self, hand):
-        if isinstance(hand, set):
-            return hand
-        if isinstance(hand[0], str):
-            return sorted([self.hand_to_value[carte] for carte in hand])
-        else:
-            return hand
 
     # def create_all_4_cards(self):
     #     counter = 0
@@ -529,176 +723,4 @@ class Odds(Manager):
 
     #placé les fonctions dans l'ordre en fonction de leur force
     ###PAS ENCORE TESTÉ CELLE LA
-    def roy_flush(self, hand):
-        temp_hand = copy.copy(hand)
-        cartes_valeurs = self.convert_to_value(hand)
-        scartes = set(cartes_valeurs)
-        try:
-            if scartes.intersection({14, 13, 12, 11, 10}) == {14, 13, 12, 11, 10}:
-                for carte in hand:
-                    if self.hand_to_value[carte] != 14 or self.hand_to_value[carte]!= 13 or self.hand_to_value[carte] != 12 or self.hand_to_value[carte] != 11 or self.hand_to_value[carte] != 10:
-                        temp_hand.remove(carte)
-                if self.flush(temp_hand):
-                    return True
-        except TypeError:
-            return False
-
-        return False
-
-    def str_flush(self, hand):
-        flush = self.flush(hand)
-        if flush[0]:
-            str8 = self.straight(flush[1])
-            if str8[0]:
-                return (True, str8[1])
-        return(False, None)
-
-    def four_of_k(self, hand):
-        counter = 1
-        current = 0
-        for i in self.convert_to_value(hand):
-            if current != i:
-                current = i
-                counter = 1
-            elif current == i:
-                counter += 1
-            if counter >= 4:
-                return (True, current)
-        return (False, None)
-
-    #returns (True, three_of_k, pair)
-    ###PAS ENCORE TESTÉ CETTE FONCTION LA
-    def full_house(self, hand):
-        temp_hand = copy.copy(hand)
-        three = self.three_of_k(hand)
-        if three[0]:
-            temp_hand = self.convert_to_value(temp_hand)
-            i = 0
-            while i<len(temp_hand):
-                # print(temp_hand[i])
-                if temp_hand[i] == three[1]:
-                    temp_hand.remove(temp_hand[i])
-                i+=1
-            pair = self.pair(temp_hand)
-            if pair[0]:
-                return(True, three[1], pair[1])
-        return(False, None)
-    # def full_house(self, hand):
-    #     temp_hand = copy.copy(hand)
-    #     three = self.three_of_k(hand)
-    #
-    #     if three[0]:
-    #         for carte in hand:
-    #             if carte[0] == three[1]:
-    #                 temp_hand.remove(carte)
-    #         pair = self.pair(temp_hand)
-    #         if pair[0]:
-    #             return(True, three[1], pair[1])
-    #
-    #     return(False, None)
-
-
-    ###PAS ENCORE TESTÉ CETTE FONCTION LA
-    def flush(self, hand):
-        currenth = []
-        currentc = []
-        currents = []
-        currentd = []
-        for i in hand:
-            if i[1] == 'h':
-                currenth.append(self.hand_to_value[i])
-            if i[1] == 'c':
-                currentc.append(self.hand_to_value[i])
-            if i[1] == 's':
-                currents.append(self.hand_to_value[i])
-            if i[1] == 'd':
-                currentd.append(self.hand_to_value[i])
-        if len(currentd) >= 5:
-            while len(currentd) > 5:
-                currentd.pop(0)
-            return (True,sorted(currentd))
-        elif len(currents) >= 5:
-            while len(currents) > 5:
-                currents.pop(0)
-            return (True,sorted(currents))
-        elif len(currentc) >= 5:
-            while len(currentc) > 5:
-                currentc.pop(0)
-            return (True,sorted(currentc))
-        elif len(currenth) >= 5:
-            while len(currenth) > 5:
-                currenth.pop(0)
-            return (True,sorted(currenth))
-        return (False, None)
-
-    def straight(self, hand):
-        suite = 0
-        cartes_valeurs = self.convert_to_value(hand)
-        str8 = []
-        scartes = set(cartes_valeurs)
-
-
-        #Pour le cas unique A 2 3 4 5 (6) (7)
-        if scartes.intersection({14, 2, 3, 4, 5, 6, 7}) == {14, 2, 3, 4, 5, 6, 7}:
-            return(True, 7)
-        elif scartes.intersection({14, 2, 3, 4, 5, 6}) == {14, 2, 3, 4, 5, 6}:
-            return(True, 6)
-        elif scartes.intersection({14, 2, 3, 4, 5}) == {14, 2, 3, 4, 5}:
-            return(True, 5)
-
-        for i in list(range(len(cartes_valeurs)))[1:]:
-            if suite >= 4:
-                return (True, str8[-1])
-            if cartes_valeurs[i] - cartes_valeurs[i-1] == 1:
-                if str8 == []:
-                    str8.append(cartes_valeurs[i-1])
-                str8.append(cartes_valeurs[i])
-                suite += 1
-            else:
-                str8 = []
-                suite = 0
-        return (False, None)
-
-    def three_of_k(self, hand):
-        counter = 1
-        current = " "
-        for i in self.convert_to_value(hand):
-            if current != i:
-                current = i
-                counter = 1
-            elif current == i:
-                counter += 1
-            if counter >= 3:
-                return (True, current)
-        return (False, None)
-
-    ###PAS TESTÉ CETTE FONCTION LA ENCORE
-    def two_pair(self, hand):
-        reponse = self.pair(hand)
-        temp_hand = self.convert_to_value(copy.copy(hand))
-        for i in temp_hand:
-            if i == reponse[1]:
-                temp_hand.remove(i)
-        reponse2 = self.pair(temp_hand)
-        if reponse2[0]:
-            return (True,reponse[1], reponse2[1])
-        return (False, None)
-
-
-    def pair(self, hand):
-        current = " "
-        vpair = 0
-        hand = self.convert_to_value(hand)
-        for i in hand:
-            if current != i:
-                current = i
-            elif current == i:
-                if i > vpair:
-                    vpair = i
-        if vpair != 0:
-            return (True, vpair)
-        return (False, None)
-
-    def high_card(self, hand):
-        temp_hand = self.convert_to_value(hand)
-        return (True, temp_hand[(len(temp_hand)%5):(len(temp_hand))])
+    

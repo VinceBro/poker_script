@@ -1,29 +1,11 @@
 import json, requests, pickle, datetime, sys, itertools, copy, time
 import random as r
+from algorithm import Odds
 # import importlib
 # importlib.import_module(algorithm)
-from algorithm import *
 
-class Cards(object):
+class Manager(object):
     def __init__(self):
-        self.SUITS = 'cdhs'
-        self.RANKS = '23456789TJQKA'
-        self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
-        self.hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, '3s': 3,
-        '4c': 4, '4d': 4, '4h': 4, '4s': 4, '5c': 5, '5d': 5, '5h': 5, '5s': 5, '6c': 6, '6d': 6,
-        '6h': 6, '6s': 6, '7c': 7, '7d': 7, '7h': 7, '7s': 7, '8c': 8, '8d': 8, '8h': 8, '8s': 8,
-        '9c': 9, '9d': 9, '9h': 9, '9s': 9, 'Tc': 10, 'Td': 10, 'Th': 10, 'Ts': 10, 'Jc': 11,
-        'Jd': 11, 'Jh': 11, 'Js': 11, 'Qc': 12, 'Qd': 12, 'Qh': 12, 'Qs': 12, 'Kc': 13, 'Kd': 13,
-        'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
-
-        self.value_to_hand = {2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7', 8: '8', 9: '9',
-        10: 'T', 11: 'J', 12: 'Q', 13: 'K', 14: 'A'}
-    def __str__(self):
-        return self.deck
-
-class Manager(Cards):
-    def __init__(self, username):
-        super(Manager, self).__init__()
         self.counter = 0
         self.url = " "
         self.username = username
@@ -42,9 +24,6 @@ class Manager(Cards):
     def store(self):
         return None
 
-    # pf == pre-flop,
-        #TODO faut décider ici si on return le response sans l'enregistrer dans la classe ou on return rien et on l'enregistre dans la classe
-
     def n_shutdown(self, str_decision):
         if (str_decision).lower() == "n":
             sys.exit("--- program terminated ---")
@@ -52,13 +31,15 @@ class Manager(Cards):
 
     def flop_boucle(self):
         while True:
-            self.hand.append(input(str("Enter your 1st card (Ex: Kh as for king of hearts)\n")))
-            if self.check_hand_in_deck(0) is False:
+            question = input(str("Enter your 1st card (Ex: Kh as for king of hearts)\n"))
+            if self.check_card_in_deck(question) is False:
+                print("mauvaise carte mon ami")
                 continue
             break
         while True:
-            self.hand.append(input(str("Enter your 2nd card (Ex: Kh as for king of hearts)\n")))
-            if self.check_hand_in_deck(1) is False:
+            question = input(str("Enter your 2st card (Ex: Kh as for king of hearts)\n"))
+            if self.check_card_in_deck(question) is False:
+                print("mauvaise carte mon ami")
                 continue
             break
         #### maths pour calculer les odds ######
@@ -67,23 +48,30 @@ class Manager(Cards):
             self.continuer = input("Do you wish to continue (y or n)?")
             self.n_shutdown(self.continuer)
             if (self.continuer).lower() == "y":
-                for i in range(3):
-                    self.continuer = input("Enter the first 3 community cards (" + str(i+ 1) + "/3) -- enter n to stop: ")
-                    self.check_in_deck(i+2)
+                i = 1
+                while(i < 4):
+                    self.continuer = input("Enter the first 3 community cards (" + str(i) + "/3) -- enter n to stop: ")
                     self.n_shutdown(self.continuer)
+                    if self.check_card_in_deck(self.continuer) is False:
+                        print("mauvaise carte mon grand ami")
+                        continue
                     self.community.append(self.continuer)
+                    i+=1
 
                 print("the flop cards for this turn are  " + str(self.community))
                 break
+            else:
+                print("es-tu attardé?")
 
     ## TODO: strip si jamais le chum entre des espaces!!!!!!!!!
     ## TODO ajout des 52 cartes pour vérifier l'input du user
     def turn_boucle(self):
-        self.shutdown = input("would you like to continue? (y/n)")
         while True:
-            self.community.append(input("Enter the 4th community card: "))
-            if self.check_community_in_deck(0) is False:
+            question = input(str("Enter 4th community card \n"))
+            if self.check_card_in_deck(question) is False:
+                print("mauvaise carte mon ami")
                 continue
+            self.community.append(question)
             break
 
         print("the community cards for this turn are now " + str(self.community))
@@ -91,16 +79,30 @@ class Manager(Cards):
         self.n_shutdown(self.shutdown)
 
     def river_boucle(self):
+        ### marche pas.....
         self.community.append(input("Enter the 5th community card: "))
-        print("the community cards for this turn are now " + str(self.community))
+        while True:
+            question = input(str("Enter 5th community card \n"))
+            if self.check_card_in_deck(question) is False:
+                print("mauvaise carte mon ami")
+                continue
+            break
         self.shutdown = input("would you like to continue to the next turn? (y/n)")
         self.n_shutdown(self.shutdown)
 
     def check_hand_in_deck(self, numero_de_carte):
         valeur = str(self.hand[numero_de_carte])
-        if valeur not in cards.deck:
-            print(cards.deck)
+        if valeur not in self.deck:
+            print(self.deck)
             print("card {} is not in deck mon chum".format(valeur))
+            return False
+        else:
+            return True
+
+    def check_card_in_deck(self, carte):
+        if carte not in self.deck:
+            # print(self.deck)
+            # print("card {} is not in deck mon chum".format(carte))
             return False
         else:
             return True
@@ -138,22 +140,22 @@ class Manager(Cards):
         print("You have a " + self.counter/self.wins + "winrate with this script")
 
 
-def main(self):
-    ## flop et preflop
-    odds.flop_boucle()
-    #TODO call api for result
-    print("Your now updated odds of winning this hand are: " + str(self.odds))
-    odds.turn_boucle()
-    print("Your now updated odds of winning this hand are: " + str(self.odds))
-    odds.river_boucle()
-    print("The odds of winning this hand are: " + str(self.odds))
+    def main(self):
+        ## flop et preflop
+        odds.flop_boucle()
+        #TODO call api for result
+        print("Your now updated odds of winning this hand are: " + str(self.odds))
+        odds.turn_boucle()
+        print("Your now updated odds of winning this hand are: " + str(self.odds))
+        odds.river_boucle()
+        print("The odds of winning this hand are: " + str(self.odds))
 
 
 
 
 if __name__ == '__main__':
-    manager = Manager('romi')
-    cards = Cards()
+    #manager = Manager('romi')
+    #cards = Cards()
     #enlever username de odds ca gosse en criss
     odds = Odds('romi')
     # counter = 0
