@@ -32,32 +32,66 @@ class Odds(Manager):
         else:
             return hand
 
-    def create_all_4_cards(self):
-        self.all_4_cards = list(itertools.combinations(self.current_deck, 4))
+    # def create_all_4_cards(self):
+    #     counter = 0
+    #     self.all_4_cards = list(itertools.combinations(self.current_deck, 4))
+    #     for i in self.all_4_cards:
+    #         allo = []
+    #         allo.append(itertools.permutations(list(i),4))
+    #         yield allo
+    def create_all_4_cards(self, hand):
+        counter = 0
+        fake_deck = copy.copy(self.current_deck)
+        fake_deck.remove(hand[0])
+        fake_deck.remove(hand[1])
+        length = len(fake_deck)
+        for i in range(length):
+            for j in range(i + 1, length):
+                bonheur = []
+                bonheur.append(self.current_deck[i])
+                bonheur.append(self.current_deck[j])
+                yield bonheur
 
-    def HandPotential(self, hand):
+        ### Pour afficher toutes les possibilités des 4 cartes(1070190 possibilités)
+        # for i in itertools.combinations(self.current_deck, 2):
+        #     fake_deck = copy.copy(self.current_deck)
+        #     fake_deck.remove(i[0])
+        #     fake_deck.remove(i[1])
+        #     for j in itertools.combinations(fake_deck, 2):
+        #         counter += 1
+        #         yield i + j
+        # print(counter)
+
+
+    def HandPotential(self):
         """calcul de 178,365 probabilitées après le flop pour prédire le nombre de
         mains qui gagneront/perderont de la valeur après le turn et le river"""
-        self.update_deck()
         HP_total = np.zeros((1,3))
         HP = np.zeros((3,3))
         # self.calculate()
         # prob_array_calculate[0,0] = self.ahead
         # prob_array_calculate[1,1] = self.tied
         # prob_array_calculate[2,2] = self.behind
-        self.create_all_4_cards()
+        self.update_deck()
+        self.played = self.hand + self.community
         ahead = 0
         behind = 2
         tied = 1
         length = len(self.current_deck)
+        # print(length)
+        # print(len(self.all_4_cards))
+        print("we're in")
         for i in range(length):
             for j in range(i + 1, length):
+                # print(i)
                 self.cunter += 1
                 bonheur = []
                 bonheur.append(self.current_deck[i])
                 bonheur.append(self.current_deck[j])
+                joie = bonheur
                 bonheur += self.community
-                output = self.compare(hand, bonheur)
+                ### bonheur est devenu
+                output = self.compare(self.played, bonheur)
 
                 ## win = 0, loss = 2, tie = 1
                 if output[0] == "Win":
@@ -66,24 +100,26 @@ class Odds(Manager):
                     index = behind
                 else:
                     index = tied
+
                 HP_total[0, index] += 1
+                # print(HP_total)
 
-            #final 5 cards!!!
-                for i in range(len(self.all_4_cards)):
-                    print(list(self.played)+list(self.all_4_cards[i]))
-
-                    adjusted_rank = self.compare(list(self.played)+list(self.all_4_cards[i]), self.community+list(self.all_4_cards[i]))
-                    if adjusted_rank[0] == "Loss":
+                ### POUR FLOP
+                for x in self.create_all_4_cards(joie):
+                    self.cunter += 1
+                    adjusted_rank = self.compare(self.played + x, bonheur + x)
+                    if str(adjusted_rank[0]) == "Loss":
                         HP[index,ahead] += 1
-                    elif adjusted_rank[0] == "Tie" and index == 2:
+                    elif str(adjusted_rank[0]) == "Tie" and index == 2:
                         HP[index,tied] += 1
                     else:
-                        HP[index, behind] += 1
+                        HP[index,behind] += 1
 
-        Ppot = (HP[behind, ahead]+(HP[behind, tied])/2 + (HP[tied,ahead])/2)/(HP_total[behind]+HP_total[tied])
-        Npot = (HP[ahead,behind]+HP[tied,behind]/2 + HP[ahead,tied]/2)/(HP_total[ahead]+HP_total[tied])
-
+        Ppot = (HP[behind, ahead]+(HP[behind, tied])/2 + (HP[tied,ahead])/2)/(HP_total[0, behind]+HP_total[0, tied])
+        Npot = (HP[ahead,behind]+HP[tied,behind]/2 + HP[ahead,tied]/2)/(HP_total[0, ahead]+HP_total[0, tied])
+        print(self.cunter)
         return (Ppot, Npot)
+
 
 
 
@@ -425,10 +461,10 @@ class Odds(Manager):
                 else:
                     set_ourHand.remove(ourRank[1])
                     set_opHand.remove(opponentRank[1])
-                    list_ourHand = list(set_ourHand)
-                    list_opHand = list(set_opHand)
-                    list_ourHand.sort()
-                    list_opHand.sort()
+                    list_ourHand = list(sorted(set_ourHand))
+                    list_opHand = list(sorted(set_opHand))
+                    # list_ourHand.sort()
+                    # list_opHand.sort()
                     length = len(list_ourHand) - 1
                     for i in range(length):
                         #import pdb; pdb.set_trace()

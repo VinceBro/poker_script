@@ -2,8 +2,8 @@ import itertools
 import copy
 import random as r
 import numpy as np
+from algorithm import *
 
-print(np.zeros((1,3)))
 
 SUITS = 'cdhs'
 RANKS = '23456789TJQKA'
@@ -18,51 +18,81 @@ hand_to_value = {'2c': 2, '2d': 2, '2h': 2, '2s': 2, '3c': 3, '3d': 3, '3h': 3, 
 '9c': 9, '9d': 9, '9h': 9, '9s': 9, 'Tc': 10, 'Td': 10, 'Th': 10, 'Ts': 10, 'Jc': 11,
 'Jd': 11, 'Jh': 11, 'Js': 11, 'Qc': 12, 'Qd': 12, 'Qh': 12, 'Qs': 12, 'Kc': 13, 'Kd': 13,
 'Kh': 13, 'Ks': 13, 'Ac': 14, 'Ad': 14, 'Ah': 14, 'As': 14}
-from algorithm import *
 
-# def pair(hand):
-#     ### à checker, doit retourner la carte de la paire, et non la carte la plus haute autre que la paire
-#     current = " "
-#     vpair = 0
-#     for i in hand:
-#         if current != i[0]:
-#             current = i[0]
-#         elif current == i[0]:
-#             if hand_to_value[i] > vpair:
-#                 vpair = hand_to_value[i]
-#     if vpair != 0:
-#         # return (True, self.value_to_hand[vpair])
-#         return (True, vpair)
-#     return (False, None)
-#
-# def two_pair(hand):
-#     temp_hand = copy.copy(hand)
-#     p1 = pair(hand)
-#     try:
-#         if p1[0]:
-#             for i in hand:
-#
-#                 if int(i[0]) == int(p1[1]):
-#                     temp_hand.remove(i)
-#         print(temp_hand)
-#         p2 = pair(temp_hand)
-#         if p2[0]:
-#             return (True, p1[1], p2[1])
-#     except TypeError:
-#         return (False, None)
-#     return (False, None)
+def HandPotential(hand):
+    """calcul de 178,365 probabilitées après le flop pour prédire le nombre de
+    mains qui gagneront/perderont de la valeur après le turn et le river"""
+    HP_total = np.zeros((1,3))
+    HP = np.zeros((3,3))
+    # odds.calculate()
+    # prob_array_calculate[0,0] = odds.ahead
+    # prob_array_calculate[1,1] = odds.tied
+    # prob_array_calculate[2,2] = odds.behind
+    odds.update_deck()
+    print(odds.hand)
+    print(odds.community)
+    odds.played = odds.hand + odds.community
+    odds.create_all_4_cards()
+    ahead = 0
+    behind = 2
+    tied = 1
+    length = len(odds.current_deck)
+    # print(length)
+    # print(len(odds.all_4_cards))
+    for i in range(length):
+        for j in range(i + 1, length):
+            odds.cunter += 1
+            bonheur = []
+            bonheur.append(odds.current_deck[i])
+            bonheur.append(odds.current_deck[j])
+            bonheur += odds.community
+            output = odds.compare(hand, bonheur)
 
-def high_card(hand):
-    temp_hand = odds.convert_to_value(hand)
-    return (True, temp_hand[(len(temp_hand)%5):(len(temp_hand))])
+            ## win = 0, loss = 2, tie = 1
+            if output[0] == "Win":
+                index = ahead
+            elif output[0] == "Loss":
+                index = behind
+            else:
+                index = tied
+
+            HP_total[0, index] += 1
+            # print(HP_total)
+
+        #final 5 cards!!!
+            for k in range(len(odds.all_4_cards)):
+                adjusted_rank = odds.compare(list(odds.played)+list(odds.all_4_cards[k]), list(odds.community)+list(odds.all_4_cards[k]))
+                if str(adjusted_rank[0]) == "Loss":
+                    HP[index,ahead] += 1
+                elif str(adjusted_rank[0]) == "Tie" and index == 2:
+                    HP[index,tied] += 1
+                else:
+                    HP[index,behind] += 1
+
+    # Ppot = (HP[behind, ahead]+(HP[behind, tied])/2 + (HP[tied,ahead])/2)/(HP_total[behind]+HP_total[tied])
+    # Npot = (HP[ahead,behind]+HP[tied,behind]/2 + HP[ahead,tied]/2)/(HP_total[ahead]+HP_total[tied])
+    # return (Ppot, Npot)
 
 
 
 if __name__ == '__main__':
     odds = Odds('romi')
-    main1 = ['4s','6s','8d','Td','As']
-    main2 = ['4s','6s','8d','Jd','Ts']
-    print(high_card(main1))
-    print(high_card(main2))
-    print('\n')
-    print(odds.compare(main1, main2))
+    odds.community = ['4s','6s','8d']
+    odds.hand = ['Jd','Ts']
+    odds.played = odds.hand + odds.community
+    allo = ['2d','2h']
+    # print(HandPotential(odds.played))
+    start = time.time()
+    odds.update_deck()
+    # print(odds.current_deck)
+
+    # for i in odds.create_all_4_cards(allo):
+    #     print(i)
+
+    # for i in odds.create_all_4_cards():
+    #     print(next(i))
+        # for j in i:
+        #     print(next(j))
+    print(odds.HandPotential())
+    end = time.time()
+    print(end-start)
