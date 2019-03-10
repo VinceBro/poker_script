@@ -1,5 +1,5 @@
 import json, pickle, datetime, sys, time
-from script import manager
+from script import *
 
 def initialize():
     if True:
@@ -15,23 +15,13 @@ def initialize():
         print("v0.0.5(beta)")
         print("Made by: jack_sparrow and davy_jones")
         time.sleep(3)
-    username = ' '
-    username = input("Enter new/existing username: ")
     manager = {}
     try:
-        with open(username + '.pickle', "rb") as fich:
+        with open('poker_script.pickle', "rb") as fich:
             manager = pickle.loads(fich.read())
-        print("Welcome back " + username + " !")
         return manager
 
     except FileNotFoundError or KeyError:
-        print("No such username was found")
-        time.sleep(1)
-        print("Creating new user")
-        time.sleep(.500)
-        print("New user created")
-        print("Welcome" + username + "!")
-        manager = manager(username)
         return manager
 
         # while True:
@@ -59,13 +49,12 @@ def initialize():
 
 
 if __name__ == "__main__":
-    # odds = odds()
-    initialize()
-
-    # try response['message']:
-    #     print("were not in boys")
-    # except KeyError:
-    #     print("were in boys")
+    try:
+        manager = initialize()
+    except:
+        print("Ending Session, Saving...")
+        with open("poker_script.pickle", "wb") as fich:
+            fich.write(pickle.dumps(manager))
 
 
     # response = unirest.get("https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c",
