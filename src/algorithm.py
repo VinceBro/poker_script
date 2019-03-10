@@ -39,6 +39,17 @@ class Odds(Manager):
     #         allo = []
     #         allo.append(itertools.permutations(list(i),4))
     #         yield allo
+    def create_all_4_cards_for_approx(self, hand):
+        counter = 0
+        for i in itertools.combinations(self.current_deck, 2):
+            fake_deck = copy.copy(self.current_deck)
+            fake_deck.remove(i[0])
+            fake_deck.remove(i[1])
+            for j in itertools.combinations(fake_deck, 2):
+                counter += 1
+                yield i + j
+
+
     def create_all_4_cards(self, hand):
         counter = 0
         fake_deck = copy.copy(self.current_deck)
@@ -61,6 +72,32 @@ class Odds(Manager):
         #         counter += 1
         #         yield i + j
         # print(counter)
+    def HandPotentialApproximation(self):
+        ahead = behind = tied = 0
+        self.update_deck()
+        counter = 0
+        for i in self.create_all_4_cards_for_approx(self.played):
+            counter +=1
+            # print(list(self.played))
+            i = list(i)
+            main1 = list(self.played)
+            main1.append(i[2])
+            main1.append(i[3])
+            main2 = self.community+i
+            # print(main1)
+            # print(main2)
+            output = self.compare(main1, main2)
+            if output[0] == "Win":
+                ahead += 1
+            elif output[0] == "Loss":
+                behind += 1
+            else:
+                tied += 1
+        print('ahead:', ahead,'tied:', tied,'behind:', behind)
+        print('counter: ', counter)
+        allo = ((ahead+tied/2)/(ahead + tied + behind))*100
+        print(str(allo)+'% chances of winning')
+        return(((ahead+tied/2)/(ahead + tied + behind))*100)
 
 
     def HandPotential(self):
