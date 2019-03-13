@@ -12,19 +12,20 @@ def initialize():
                     /___/            /_/
 
 """)
-        print("v0.0.5(beta)")
-        print("Made by: jack_sparrow and davy_jones")
-        time.sleep(3)
-    manager = {}
-    try:
-        with open('poker_script.pickle', "rb") as fich:
-            manager = pickle.loads(fich.read())
-        return manager
+    print("v0.0.5(beta)")
+    print("Made by: jack_sparrow and davy_jones")
+    time.sleep(3)
+    manager = Manager()
+    return manager
+   # try:
+   #     with open('poker_script.pickle', "rb") as fich:
+   #         manager = pickle.loads(fich.read())
+   #     return manager
 
-    except FileNotFoundError or KeyError:
+   # except FileNotFoundError or KeyError:
         ## A RAJOUTER QUAND TOUTE VA FONCTIONNER::
-        # manager = Odds()
-        return manager
+   #     manager = Manager()
+   #     return manager
 
         # while True:
         #
@@ -51,12 +52,13 @@ def initialize():
 
 
 if __name__ == "__main__":
-    try:
-        manager = initialize()
-    except:
-        print("Ending Session, Saving...")
-        with open("poker_script.pickle", "wb") as fich:
-            fich.write(pickle.dumps(manager))
+    
+    manager = initialize()
+    manager.main_menu()
+    #except:
+        #print("Ending Session, Saving...")
+        #with open("poker_script.pickle", "wb") as fich:
+        #    fich.write(pickle.dumps(manager))
 
 
     # response = unirest.get("https://sf-api-on-demand-poker-odds-v1.p.mashape.com/flop?board=As%2C2h%2CTh&hole=Ac%2C3c",

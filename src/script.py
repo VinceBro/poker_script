@@ -1,95 +1,106 @@
-import json, requests, pickle, datetime, sys, itertools, copy, time
-import random as r
-from algorithm import Odds
-# import importlib
-# importlib.import_module(algorithm)
 
-class Manager(object):
+from algorithm import *
+
+
+class Manager(Odds):
     def __init__(self):
+        super().__init__()
         self.counter = 0
-        self.url = " "
-        self.username = username
-        self.NAME = " "
-        self.hand = []
-        self.community = []
-        self.odds = "\n"+"dovid manque encore de pratique"
-        self.continuer = "y"
-        self.date = datetime.date.today()
-        self.shutdown = ""
+        self.odds =Odds() 
         self.wins = 0
+        self.continuer = " "
 
-    def initialize(self):
-        pass
+    def print_state(self):
+        print("Your hand for this turn is : " + str(self.hand))
+        print("The community cards for this turn are now " + str(self.community))
+        print("Your odds of winning this turn are : " + str(self.odds.calculate(self.hand + self.community)))
 
-    def store(self):
-        return None
 
-    def n_shutdown(self, str_decision):
-        if (str_decision).lower() == "n":
-            sys.exit("--- program terminated ---")
-        return None
+
 
     def flop_boucle(self):
         while True:
-            question = input(str("Enter your 1st card (Ex: Kh as for king of hearts)\n"))
+            question = input(str("Enter your 1st card (Ex: Kh as for king of hearts, Td as for ten of diamonds)\n"))
             if self.check_card_in_deck(question) is False:
-                print("mauvaise carte mon ami")
+                print("Enter a valid card to continue")
                 continue
-            break
+            else:
+                self.hand.append(question)
+                break
         while True:
-            question = input(str("Enter your 2st card (Ex: Kh as for king of hearts)\n"))
+            question = input(str("Enter your 2nd card (Ex: Kh as for king of hearts, Td as for ten of diamonds)\n"))
             if self.check_card_in_deck(question) is False:
-                print("mauvaise carte mon ami")
+                print("Enter a valid card to continue")
                 continue
-            break
+            else:
+                self.hand.append(question)
+                break
         #### maths pour calculer les odds ######
-        print("Your initial odds of winning this hand (pre-flop) are: " + str(self.odds))
+        print("Your initial odds of winning this hand (pre-flop) are: " + "not calculated yet (faut implémenter pre-flop :(")
         while True:
             self.continuer = input("Do you wish to continue (y or n)?")
-            self.n_shutdown(self.continuer)
             if (self.continuer).lower() == "y":
                 i = 1
-                while(i < 4):
-                    self.continuer = input("Enter the first 3 community cards (" + str(i) + "/3) -- enter n to stop: ")
-                    self.n_shutdown(self.continuer)
-                    if self.check_card_in_deck(self.continuer) is False:
-                        print("mauvaise carte mon grand ami")
-                        continue
-                    self.community.append(self.continuer)
-                    i+=1
-
-                print("the flop cards for this turn are  " + str(self.community))
+                break
+            elif self.continuer.lower() == "n":
+                self.main_menu()
                 break
             else:
-                print("es-tu attardé?")
+                continue
+                while(i < 4):
+                    self.continuer = input("Enter the first 3 community cards (" + str(i) + "/3) -- enter n to stop: ")
+                    if self.check_card_in_deck(self.continuer) is False:
+                        print("Enter a valid card to continue")
+                        continue
+                    elif self.continuer.lower() == "n":
+                        self.main_menu()
+                    else:
+                        self.community.append(self.continuer)
+                        i+=1
 
+        self.print_state()
+
+        while True:
+            self.continuer = input("would you like to continue to the next turn? (y/n)")
+            if self.continuer.lower() == "y":
+                self.turn_boucle()
+            elif self.continuer.lower() == "n":
+                self.main_menu()
+            else:
+                continue
     ## TODO: strip si jamais le chum entre des espaces!!!!!!!!!
     ## TODO ajout des 52 cartes pour vérifier l'input du user
     def turn_boucle(self):
         while True:
             question = input(str("Enter 4th community card \n"))
             if self.check_card_in_deck(question) is False:
-                print("mauvaise carte mon ami")
+                print("Enter a valid card to continue")
                 continue
             self.community.append(question)
             break
+        self.print_state()
 
-        print("the community cards for this turn are now " + str(self.community))
-        self.shutdown = input("would you like to continue to the next turn? (y/n)")
-        self.n_shutdown(self.shutdown)
+        while True:
+            self.continuer = input("would you like to continue to the next turn? (y/n)")
+            if self.continuer.lower() == "y":
+                self.river_boucle()
+            elif self.continuer.lower() == "n":
+                self.main_menu()
+            else:
+                continue
 
     def river_boucle(self):
         ### marche pas.....
-        self.community.append(input("Enter the 5th community card: "))
         while True:
-            question = input(str("Enter 5th community card \n"))
+            self.continuer = input(str("Enter 5th community card \n"))
             if self.check_card_in_deck(question) is False:
                 print("mauvaise carte mon ami")
                 continue
-            break
-        self.shutdown = input("would you like to continue to the next turn? (y/n)")
-        self.n_shutdown(self.shutdown)
-
+            else:
+                self.community.append(self.continuer)
+                break
+        self.print_state()
+        self.main_menu()
     def check_hand_in_deck(self, numero_de_carte):
         valeur = str(self.hand[numero_de_carte])
         if valeur not in self.deck:
@@ -120,13 +131,12 @@ class Manager(object):
         choice = ""
         while True:
             choice = input("What would you like to do? (p: Resume playing, s: View stats, n: Stop playing)")
-            self.n_shutdown(choice)
 
             if choice.lower() == "p":
-                main()
+                self.main()
                 continue
             elif choice.lower() == "s":
-                stats()
+                self.stats()
                 continue
             else:
                 continue
@@ -142,7 +152,7 @@ class Manager(object):
 
     def main(self):
         ## flop et preflop
-        odds.flop_boucle()
+        self.flop_boucle()
         #TODO call api for result
         print("Your now updated odds of winning this hand are: " + str(self.odds))
         odds.turn_boucle()

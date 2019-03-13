@@ -1,9 +1,11 @@
-from script import *
 import numpy as np
+import random as r
+import json, requests, pickle, datetime, sys, itertools, copy, time
 
-class Cards(Manager):
+class Cards(object):
     def __init__(self):
-        super().__init__()
+        self.hand = []
+        self.community = []
         self.SUITS = 'cdhs'
         self.RANKS = '23456789TJQKA'
         self.deck = list(''.join(card) for card in itertools.product(self.RANKS, self.SUITS))
@@ -217,7 +219,6 @@ class Odds(Hands):
         self.played = []
         self.opplayed = []
         self.all_4_cards = []
-        self.testing_dict = {"hand" : [], "stats": {"roy_flush": [],"str_flush": [], "four_of_k" : [], "full_house": [], "flush": [], "straight" : [], "three_of_k": [], "two_pair": [], "pair" : [] }}
         self.ahead = 0
         self.tie = 0
         self.behind = 0
@@ -353,7 +354,7 @@ class Odds(Hands):
 
 
 
-
+    #Prends en entrée la main au complet
     def calculate(self, hand):
         """calcul de 1081 probabilités en fonction du nombre d'adversaires
         , des cartes dans les mains du joueur et dans les mains des adversaires"""
