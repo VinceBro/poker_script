@@ -41,13 +41,8 @@ class Manager(Odds):
             self.continuer = input("Do you wish to continue (y or n)?")
             if (self.continuer).lower() == "y":
                 i = 1
-                break
-            elif self.continuer.lower() == "n":
-                self.main_menu()
-                break
-            else:
-                continue
-                while(i < 4):
+                while i < 4:
+
                     self.continuer = input("Enter the first 3 community cards (" + str(i) + "/3) -- enter n to stop: ")
                     if self.check_card_in_deck(self.continuer) is False:
                         print("Enter a valid card to continue")
@@ -57,6 +52,22 @@ class Manager(Odds):
                     else:
                         self.community.append(self.continuer)
                         i+=1
+                break
+            elif self.continuer.lower() == "n":
+                self.main_menu()
+                break
+            else:
+                continue
+                # while(i < 4):
+                #     self.continuer = input("Enter the first 3 community cards (" + str(i) + "/3) -- enter n to stop: ")
+                #     if self.check_card_in_deck(self.continuer) is False:
+                #         print("Enter a valid card to continue")
+                #         continue
+                #     elif self.continuer.lower() == "n":
+                #         self.main_menu()
+                #     else:
+                #         self.community.append(self.continuer)
+                #         i+=1
 
         self.print_state()
 
@@ -72,11 +83,11 @@ class Manager(Odds):
     ## TODO ajout des 52 cartes pour vérifier l'input du user
     def turn_boucle(self):
         while True:
-            question = input(str("Enter 4th community card \n"))
-            if self.check_card_in_deck(question) is False:
+            self.continuer = input(str("Enter 4th community card \n"))
+            if self.check_card_in_deck(self.continuer) is False:
                 print("Enter a valid card to continue")
                 continue
-            self.community.append(question)
+            self.community.append(self.continuer)
             break
         self.print_state()
 
@@ -93,7 +104,7 @@ class Manager(Odds):
         ### marche pas.....
         while True:
             self.continuer = input(str("Enter 5th community card \n"))
-            if self.check_card_in_deck(question) is False:
+            if self.check_card_in_deck(self.continuer) is False:
                 print("mauvaise carte mon ami")
                 continue
             else:
@@ -138,6 +149,8 @@ class Manager(Odds):
             elif choice.lower() == "s":
                 self.stats()
                 continue
+            elif choice.lower() == "n":
+                sys.exit("Program terminated")
             else:
                 continue
             choice = input("Did you win this hand? (y/n)")
