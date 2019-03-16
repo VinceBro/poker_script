@@ -140,7 +140,7 @@ class Manager(Odds):
     def main_menu(self):
         choice = ""
         while True:
-            choice = input("What would you like to do? (p: Resume playing, s: View stats, n: Stop playing)")
+            choice = input("What would you like to do? (p: Resume playing, s: View stats, n: Stop playing, t: Test functions (developper))")
 
             if choice.lower() == "p":
                 self.hand = []
@@ -152,6 +152,8 @@ class Manager(Odds):
                 continue
             elif choice.lower() == "n":
                 sys.exit("Program terminated")
+            elif choice.lower() == "t":
+                self.test_mode()
             else:
                 continue
             choice = input("Did you win this hand? (y/n)")
@@ -175,7 +177,19 @@ class Manager(Odds):
         print("The odds of winning this hand are: " + str(self.odds))
 
 
-
+    def test_mode(self):
+        while True:
+            self.continuer = input("What do you wish to test? (f: function, C: calculate, c: compare, n: return to main menu)")
+            if self.continuer.lower() == "f":
+                print("va falloir faire une fct test function dans odds")
+            elif self.continuer == "c":
+                self.test_compare()
+            elif self.continuer == "C":
+                self.test_calculate()
+            elif self.continuer.lower() == "n":
+                self.main_menu()
+            else:
+                continue
 
 if __name__ == '__main__':
     #manager = Manager('romi')

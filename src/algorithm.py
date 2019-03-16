@@ -395,7 +395,8 @@ class Odds(Hands):
         print("Your hand : " + str(self.hand) + "  Community cards : " + str(self.community))
         print("# of opponents : " +  str(self.opponents))
         print("\n")
-        print("Odds of winning : " + str(round(self.calculate(self.played) * 100, 2)) + "%")
+        print("Odds of winning : " + str(round(self.calculate(self.hand, self.community) * 100, 2)) + "%")
+
         # print("Ajusted odds of winning(# players) : " + str(float(round((self.calculate(self.played) * 100))**self.opponents), 2) + "%")
         print("Wins : " + str(self.ahead) + "    Losses : " + str(self.behind) + "    Ties : " + str(self.tied))
         print("Iterations : " + str(self.cunter))
