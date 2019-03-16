@@ -13,7 +13,7 @@ class Manager(Odds):
     def print_state(self):
         print("Your hand for this turn is : " + str(self.hand))
         print("The community cards for this turn are now " + str(self.community))
-        print("Your odds of winning this turn are : " + str(self.odds.calculate(self.hand + self.community)))
+        print("Your odds of winning this turn are : " + str(self.odds.calculate(self.hand, self.community)))
 
 
 
@@ -50,7 +50,7 @@ class Manager(Odds):
                     elif self.continuer.lower() == "n":
                         self.main_menu()
                     else:
-                        self.community.append(self.continuer)
+                        (self.community).append(self.continuer)
                         i+=1
                 break
             elif self.continuer.lower() == "n":
@@ -68,7 +68,6 @@ class Manager(Odds):
                 #     else:
                 #         self.community.append(self.continuer)
                 #         i+=1
-
         self.print_state()
 
         while True:
@@ -87,7 +86,7 @@ class Manager(Odds):
             if self.check_card_in_deck(self.continuer) is False:
                 print("Enter a valid card to continue")
                 continue
-            self.community.append(self.continuer)
+            (self.community).append(self.continuer)
             break
         self.print_state()
 
@@ -108,7 +107,7 @@ class Manager(Odds):
                 print("mauvaise carte mon ami")
                 continue
             else:
-                self.community.append(self.continuer)
+                (self.community).append(self.continuer)
                 break
         self.print_state()
         self.main_menu()
@@ -144,6 +143,8 @@ class Manager(Odds):
             choice = input("What would you like to do? (p: Resume playing, s: View stats, n: Stop playing)")
 
             if choice.lower() == "p":
+                self.hand = []
+                self.community = []
                 self.main()
                 continue
             elif choice.lower() == "s":
