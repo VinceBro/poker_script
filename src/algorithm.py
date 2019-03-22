@@ -227,7 +227,7 @@ class Odds(Hands):
         self.opponents = 1
         self.cunter = 0
         with open("preflopodds.txt","r") as fich:
-            self.preflop_dict = fich.read()
+            self.preflop_dict = ast.literal_eval(fich.read())
 
     # def create_all_4_cards(self):
     #     counter = 0
@@ -245,7 +245,6 @@ class Odds(Hands):
         else:
             card_type = 'o'
         index = str(hand[0][0]) + str(hand[1][0]) + card_type
-        self.preflop_dict = ast.literal_eval(self.preflop_dict)
         try:
             return(str(self.preflop_dict[index][opponents]))
         except KeyError or ValueError:
