@@ -1,4 +1,4 @@
-
+import pyximport; pyximport.install()
 from algorithm import *
 
 
