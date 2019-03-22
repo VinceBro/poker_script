@@ -76,24 +76,26 @@ def HandPotential(hand):
 
 
 if __name__ == '__main__':
-    odds = Odds('romi')
-    odds.community = ['4s','6s','8d']
-    odds.hand = ['Jd','Ts']
-    odds.played = odds.hand + odds.community
-    allo = ['2d','2h']
-    odds.update_deck()
-    # print(odds.current_deck)
+    odds = Odds()
+    odds.preflop_odds(['Th', 'Ad'], 3)
+    # odds = Odds('romi')
+    # odds.community = ['4s','6s','8d']
+    # odds.hand = ['Jd','Ts']
+    # odds.played = odds.hand + odds.community
+    # allo = ['2d','2h']
+    # odds.update_deck()
+    # # print(odds.current_deck)
 
-    # for i in odds.create_all_4_cards_for_approx(allo):
-    #     print(i)
-    start = time.time()
-    odds.HandPotentialApproximation()
+    # # for i in odds.create_all_4_cards_for_approx(allo):
+    # #     print(i)
+    # start = time.time()
+    # odds.HandPotentialApproximation()
 
 
-    # for i in odds.create_all_4_cards():
-    #     print(next(i))
-        # for j in i:
-        #     print(next(j))
-    # print(odds.HandPotential())
-    end = time.time()
-    print(end-start)
+    # # for i in odds.create_all_4_cards():
+    # #     print(next(i))
+    #     # for j in i:
+    #     #     print(next(j))
+    # # print(odds.HandPotential())
+    # end = time.time()
+    # print(end-start)

@@ -226,6 +226,8 @@ class Odds(Hands):
         self.current_deck = []
         self.opponents = 1
         self.cunter = 0
+        with open("preflopodds.txt","r") as fich:
+            self.preflop_dict = fich.read()
 
     # def create_all_4_cards(self):
     #     counter = 0
@@ -234,6 +236,19 @@ class Odds(Hands):
     #         allo = []
     #         allo.append(itertools.permutations(list(i),4))
     #         yield allo
+    def preflop_odds(self, hand, opponents):
+        card_type = ''
+        if hand[0][1] == hand[1][1]:
+            card_type = 's'
+        elif hand[0][0] == hand[1][0]:
+            card_type = ''
+        else:
+            card_type = 'o'
+        index = str(hand[0][0]) + str(hand[1][0]) + card_type
+        print(index)
+        print(type(json.loads(self.preflop_dict)))
+        print(self.preflop_dict[index][str(opponents)])
+
     def create_all_4_cards_for_approx(self, hand):
         counter = 0
         for i in itertools.combinations(self.current_deck, 2):
