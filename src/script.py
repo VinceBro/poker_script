@@ -1,4 +1,3 @@
-
 from algorithm import *
 
 
@@ -13,7 +12,7 @@ class Manager(Odds):
     def print_state(self):
         print("Your hand for this turn is : " + str(self.hand))
         print("The community cards for this turn are now " + str(self.community))
-        print("Your odds of winning this turn are : " + str(self.odds.calculate(self.hand, self.community)))
+        print("Your odds of winning this turn are : " + str(self.odds.calculate(self.hand, self.community, self.opponents)))
 
 
 
@@ -140,11 +139,12 @@ class Manager(Odds):
     def main_menu(self):
         choice = ""
         while True:
-            choice = input("What would you like to do? (p: Resume playing, s: View stats, n: Stop playing, t: Test functions (developper))")
+            choice = input("What would you like to do?\np: Resume playing\ns: View stats\nn: Stop playing\nt: Test functions (developper)\n")
 
             if choice.lower() == "p":
                 self.hand = []
                 self.community = []
+                self.opponents = input("How many opponents are you playing against this round?\n")
                 self.main()
                 continue
             elif choice.lower() == "s":

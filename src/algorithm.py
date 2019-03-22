@@ -355,7 +355,7 @@ class Odds(Hands):
 
 
     #Prends en entrée la main au complet
-    def calculate(self, hand, community):
+    def calculate(self, hand, community, opponents):
         """calcul de 1081 probabilités en fonction du nombre d'adversaires
         , des cartes dans les mains du joueur et dans les mains des adversaires"""
         self.ahead = self.tied = self.behind = 0
@@ -375,7 +375,6 @@ class Odds(Hands):
                     self.behind += 1
                 else:
                     self.tied += 1
-
         return(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents)
                 #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
         print(len(self.poss_op_hands))
