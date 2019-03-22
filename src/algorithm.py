@@ -1,6 +1,6 @@
 import numpy as np
 import random as r
-import json, requests, pickle, datetime, sys, itertools, copy, time
+import json, requests, pickle, datetime, sys, itertools, copy, time, ast
 
 class Cards(object):
     def __init__(self):
@@ -245,10 +245,12 @@ class Odds(Hands):
         else:
             card_type = 'o'
         index = str(hand[0][0]) + str(hand[1][0]) + card_type
-        print(index)
-        print(type(json.loads(self.preflop_dict)))
-        print(self.preflop_dict[index][str(opponents)])
-
+        self.preflop_dict = ast.literal_eval(self.preflop_dict)
+        try:
+            return(str(self.preflop_dict[index][opponents]))
+        except KeyError or ValueError:
+            index =  str(hand[1][0]) + str(hand[0][0]) + card_type
+            return(str(self.preflop_dict[index][opponents]))
     def create_all_4_cards_for_approx(self, hand):
         counter = 0
         for i in itertools.combinations(self.current_deck, 2):
@@ -390,7 +392,7 @@ class Odds(Hands):
                     self.behind += 1
                 else:
                     self.tied += 1
-        return(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents)
+        return(100*(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents))
                 #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
         print(len(self.poss_op_hands))
         print(self.poss_op_hands)

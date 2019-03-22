@@ -12,7 +12,7 @@ class Manager(Odds):
     def print_state(self):
         print("Your hand for this turn is : " + str(self.hand))
         print("The community cards for this turn are now " + str(self.community))
-        print("Your odds of winning this turn are : " + str(self.odds.calculate(self.hand, self.community, self.opponents)))
+        print("Your odds of winning this turn are : " + str(self.odds.calculate(self.hand, self.community, self.opponents)) + '%')
 
 
 
@@ -35,7 +35,7 @@ class Manager(Odds):
                 self.hand.append(question)
                 break
         #### maths pour calculer les odds ######
-        print("Your initial odds of winning this hand (pre-flop) are: " + "not calculated yet (faut implémenter pre-flop :(")
+        print("Your initial odds of winning this hand (pre-flop) are: " + self.preflop_odds(self.hand, int(self.opponents)) + '%')
         while True:
             self.continuer = input("Do you wish to continue (y or n)?")
             if (self.continuer).lower() == "y":
