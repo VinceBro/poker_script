@@ -13,7 +13,7 @@ def initialize():
 
 """)
     print("v0.0.5(beta)")
-    print("Made by: jack_sparrow and davy_jones")
+    print("Made by: jack_sparrow and davy_jones\n\n\n")
     time.sleep(3)
     manager = Manager()
     return manager
