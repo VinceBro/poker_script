@@ -1,6 +1,6 @@
 import numpy as np
 import random as r
-import json, requests, pickle, datetime, sys, itertools, copy, time
+import json, requests, pickle, datetime, sys, itertools, copy, time, ast
 
 class Cards(object):
     def __init__(self):
@@ -226,6 +226,8 @@ class Odds(Hands):
         self.current_deck = []
         self.opponents = 1
         self.cunter = 0
+        with open("preflopodds.txt","r") as fich:
+            self.preflop_dict = ast.literal_eval(fich.read())
 
     # def create_all_4_cards(self):
     #     counter = 0
@@ -234,6 +236,20 @@ class Odds(Hands):
     #         allo = []
     #         allo.append(itertools.permutations(list(i),4))
     #         yield allo
+    def preflop_odds(self, hand, opponents):
+        card_type = ''
+        if hand[0][1] == hand[1][1]:
+            card_type = 's'
+        elif hand[0][0] == hand[1][0]:
+            card_type = ''
+        else:
+            card_type = 'o'
+        index = str(hand[0][0]) + str(hand[1][0]) + card_type
+        try:
+            return(str(self.preflop_dict[index][opponents]))
+        except KeyError or ValueError:
+            index =  str(hand[1][0]) + str(hand[0][0]) + card_type
+            return(str(self.preflop_dict[index][opponents]))
     def create_all_4_cards_for_approx(self, hand):
         counter = 0
         for i in itertools.combinations(self.current_deck, 2):
@@ -298,10 +314,8 @@ class Odds(Hands):
     def HandPotential(self):
         """calcul de 178,365 probabilitées après le flop pour prédire le nombre de
         mains qui gagneront/perderont de la valeur après le turn et le river"""
-        
-        cdef int ahead, behind, tied, i, j, x, length
-        cdef int HP[3][3]
-        cdef int HP_total[1][3]
+        HP_total = np.zeros((1,3))
+        HP = np.zeros((3,3))
         # self.calculate()
         # prob_array_calculate[0,0] = self.ahead
         # prob_array_calculate[1,1] = self.tied
@@ -357,7 +371,7 @@ class Odds(Hands):
 
 
     #Prends en entrée la main au complet
-    def calculate(self, hand, community):
+    def calculate(self, hand, community, opponents):
         """calcul de 1081 probabilités en fonction du nombre d'adversaires
         , des cartes dans les mains du joueur et dans les mains des adversaires"""
         self.ahead = self.tied = self.behind = 0
@@ -377,15 +391,14 @@ class Odds(Hands):
                     self.behind += 1
                 else:
                     self.tied += 1
-
-        return(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents)
+        return(100*(((self.ahead+self.tied/2)/(self.ahead + self.tied + self.behind))**self.opponents))
                 #self.poss_op_hands.append((self.current_deck[i], self.current_deck[j]))
         print(len(self.poss_op_hands))
         print(self.poss_op_hands)
 
 
     ###FOR TEST PURPOSES
-    cpdef double test_calculate(self):
+    def test_calculate(self):
         start = time.time()
         self.played = []
         self.cunter = 0

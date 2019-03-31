@@ -1,4 +1,6 @@
 src/__pycache__/*
 src/test.py
 src/poker_script.pickle
+src/cython/__pycache__
+src/cython/*.so
 APIlayout.txt
