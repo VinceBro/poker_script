@@ -1,3 +1,8 @@
-import handpotential
+from algorithm import Odds
+import time
 
-handpotential.HandPotential(['Ah', '2d'], ['5c', '3h', '9d'])
+start = time.time()
+odds = Odds()
+odds.HandPotential(['Ah', '2d'], ['5c', '3h', '9d'])
+end = time.time()
+print (end - start)
