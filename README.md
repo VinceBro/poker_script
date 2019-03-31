@@ -1,6 +1,6 @@
 
 ***BRANCH CYTHON***
-To develop on this branch, change the code in src/cython/dev and compile with command python setup.py build_ext --inplace in directory cython.
+To develop on this branch, change the code in src/cython/dev and compile with command python setup.py build_ext --inplace in directory cython. To test use python testing.py.
 
 
 
